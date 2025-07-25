@@ -17,114 +17,125 @@ class WatchController extends Controller
 
     public function movie(Request $request, $slug)
     {
-        $listing = Post::where('slug', $slug)->where('status', 'publish')->where('type',
-            'movie')->firstOrFail() ?? abort(404);
+        try {
+            $listing = Post::where('slug', $slug)->where('status', 'publish')->where('type', 'movie')->firstOrFail();
 
-        $genres = $listing->genres->modelKeys();
-        $recommends = Post::where('type', 'movie')->whereHas('genres', function ($q) use ($genres) {
-            $q->whereIn('genres.id', $genres);
-        })->where('id', '!=', $listing->id)->where('status', 'publish')->take(8)->get();
+            $genres = $listing->genres->modelKeys();
+            $recommends = Post::where('type', 'movie')->whereHas('genres', function ($q) use ($genres) {
+                $q->whereIn('genres.id', $genres);
+            })->where('id', '!=', $listing->id)->where('status', 'publish')->take(8)->get();
 
+            // Enhanced SEO with our helper
+            $seoMeta = \App\Helpers\SEOHelper::generateMovieMeta($listing, $request);
+            
+            ## Original Schema.org SEO ##
+            $config['breadcrumb'] = Schema::breadcrumbList()
+                ->itemListElement([
+                    Schema::listItem()
+                        ->position(1)
+                        ->item(
+                            Schema::thing()
+                                ->name(__('Home'))
+                                ->id(route('index'))
+                        ),
+                    Schema::listItem()
+                        ->position(2)
+                        ->item(
+                            Schema::thing()
+                                ->name(__('Movies'))
+                                ->id(route('movies'))
+                        )
+                ]);
+            $schema = Schema::movie()
+                ->name($listing->title)
+                ->description($listing->overview)
+                ->image($listing->imageurl)
+                ->datePublished($listing->created_at->format('Y-m-d'))
+                ->if(isset($listing->trailer), function ($schema) use ($listing) {
+                    $schema->trailer(
+                        Schema::videoObject()
+                            ->name($listing->title)
+                            ->description($listing->overview)
+                            ->thumbnailUrl($listing->imageurl)
+                            ->embedUrl($listing->trailer)
+                            ->uploadDate($listing->created_at->format('Y-m-d'))
+                            ->contentUrl(route($listing->type, $listing->slug))
+                    );
+                })
+                ->potentialAction(
+                    Schema::WatchAction()
+                        ->target(route($listing->type, $listing->slug))
+                )
+                ->if(isset($listing->country->name), function ($schema) use ($listing) {
+                    $schema->countryOfOrigin(
+                        Schema::country()
+                            ->name($listing->country->name)
+                    );
+                })
+                ->review(
+                    Schema::review()
+                        ->author(Schema::person()->name(config('settings.site_name')))
+                        ->datePublished($listing->updated_at->format('Y-m-d'))
+                        ->reviewBody($listing->overview)
+                )
+                ->aggregateRating(
+                    Schema::aggregateRating()
+                        ->ratingValue($listing->vote_average)
+                        ->bestRating('10.0')
+                        ->worstRating('1.0')
+                        ->ratingCount($listing->view == 0 ? 1 : $listing->view)
+                );
 
-        ## SEO ##
-        $config['breadcrumb'] = Schema::breadcrumbList()
-            ->itemListElement([
-                Schema::listItem()
-                    ->position(1)
-                    ->item(
-                        Schema::thing()
-                            ->name(__('Home'))
-                            ->id(route('index'))
-                    ),
-                Schema::listItem()
-                    ->position(2)
-                    ->item(
-                        Schema::thing()
-                            ->name(__('Movies'))
-                            ->id(route('movies'))
-                    )
+            foreach ($listing->peoples as $people) {
+                $peopleSchema[] = Schema::person()
+                    ->name($people->name)
+                    ->url(route('people', $people->slug));
+            }
+            if (isset($peopleSchema)) {
+                $schema->actor($peopleSchema);
+            }
+            $config['schema'] = $schema;
+
+            // Merge enhanced SEO meta
+            $config = array_merge($config, $seoMeta);
+
+            // Override with custom meta if available
+            if ($listing->meta_title and $listing->meta_description) {
+                $config['title'] = $listing->meta_title;
+                $config['description'] = $listing->meta_description;
+            }
+
+            ## Track view and history ##
+            if ($request->user() and !$listing->logs()->exists() and config('settings.history') == 'active') {
+                try {
+                    $data = new Log();
+                    $data->user_id = $request->user()->id;
+                    $listing->logs()->save($data);
+
+                    $listing->increment('view');
+                } catch (\Exception $e) {
+                    \Log::warning('Error tracking movie view: ' . $e->getMessage(), [
+                        'movie_id' => $listing->id,
+                        'user_id' => $request->user()->id
+                    ]);
+                }
+            }
+
+            return view('watch.movie', compact('config', 'listing', 'recommends'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::warning('Movie not found: ' . $slug, [
+                'slug' => $slug,
+                'user_id' => auth()->id()
             ]);
-        $schema = Schema::movie()
-            ->name($listing->title)
-            ->description($listing->overview)
-            ->image($listing->imageurl)
-            ->datePublished($listing->created_at->format('Y-m-d'))
-            ->if(isset($listing->trailer), function ($schema) use ($listing) {
-                $schema->trailer(
-                    Schema::videoObject()
-                        ->name($listing->title)
-                        ->description($listing->overview)
-                        ->thumbnailUrl($listing->imageurl)
-                        ->embedUrl($listing->trailer)
-                        ->uploadDate($listing->created_at->format('Y-m-d'))
-                        ->contentUrl(route($listing->type, $listing->slug))
-                );
-            })
-            ->potentialAction(
-                Schema::WatchAction()
-                    ->target(route($listing->type, $listing->slug))
-            )
-            ->if(isset($listing->country->name), function ($schema) use ($listing) {
-                $schema->countryOfOrigin(
-                    Schema::country()
-                        ->name($listing->country->name)
-                );
-            })
-            ->review(
-                Schema::review()
-                    ->author(Schema::person()->name(config('settings.site_name')))
-                    ->datePublished($listing->updated_at->format('Y-m-d'))
-                    ->reviewBody($listing->overview)
-            )
-            ->aggregateRating(
-                Schema::aggregateRating()
-                    ->ratingValue($listing->vote_average)
-                    ->bestRating('10.0')
-                    ->worstRating('1.0')
-                    ->ratingCount($listing->view == 0 ? 1 : $listing->view)
-            );
-
-        foreach ($listing->peoples as $people) {
-            $peopleSchema[] = Schema::person()
-                ->name($people->name)
-                ->url(route('people', $people->slug));
-
+            abort(404);
+        } catch (\Exception $e) {
+            \Log::error('Error loading movie page: ' . $e->getMessage(), [
+                'slug' => $slug,
+                'user_id' => auth()->id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            abort(500);
         }
-        if (isset($peopleSchema)) {
-            $schema->actor($peopleSchema);
-        }
-        $config['schema'] = $schema;
-
-        if ($listing->meta_title and $listing->meta_description) {
-            $config['title'] = $listing->meta_title;
-            $config['description'] = $listing->meta_description;
-        } else {
-            $new = array(
-                $listing->title,
-                $listing->overview,
-                $listing->release_date->format('Y'),
-                !empty($listing->country->name) ? $listing->country->name : null,
-                isset($listing->genres[0]) ? $listing->genres[0]->title : null,
-            );
-            $old = array('[title]', '[description]', '[release]', '[country]', '[genre]');
-
-            $config['title'] = trim(str_replace($old, $new, trim(config('settings.movie_title'))));
-            $config['description'] = trim(str_replace($old, $new, trim(config('settings.movie_description'))));
-            $config['image'] = $listing->coverurl;
-        }
-        ## SEO ##
-
-        if ($request->user() and !$listing->logs()->exists() and config('settings.history') == 'active') {
-
-            $data = new Log();
-            $data->user_id = $request->user()->id;
-            $listing->logs()->save($data);
-
-            $listing->view = (int) $listing->view + 1;
-            $listing->save();
-
-        }
-        return view('watch.movie', compact('config', 'listing', 'recommends'));
     }
 
     public function tv(Request $request, $slug)
