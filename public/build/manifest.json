@@ -1,4 +1,16 @@
 {
+  "_alpine-l0sNRNKZ.js": {
+    "file": "assets/alpine-l0sNRNKZ.js",
+    "name": "alpine"
+  },
+  "_swiper-l0sNRNKZ.js": {
+    "file": "assets/swiper-l0sNRNKZ.js",
+    "name": "swiper"
+  },
+  "_vendor-C-53TVFr.js": {
+    "file": "assets/vendor-C-53TVFr.js",
+    "name": "vendor"
+  },
   "resources/fonts/Inter-Black.woff": {
     "file": "assets/Inter-Black-DtxVgCT8.woff",
     "src": "resources/fonts/Inter-Black.woff"
@@ -196,16 +208,19 @@
     "src": "resources/img/texture.webp"
   },
   "resources/js/app.js": {
-    "file": "assets/app-B5hdEjy-.js",
+    "file": "assets/app-BSTO0XVl.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
+    "imports": [
+      "_vendor-C-53TVFr.js"
+    ],
     "css": [
-      "assets/app-Ura6MCe4.css"
+      "assets/app-Cg4GiC7M.css"
     ]
   },
   "resources/scss/app.scss": {
-    "file": "assets/app-pOJWZIrr.css",
+    "file": "assets/app-B8ux4its.css",
     "src": "resources/scss/app.scss",
     "isEntry": true,
     "names": [

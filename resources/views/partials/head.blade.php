@@ -2,6 +2,15 @@
 <link rel="icon" type="image/png" sizes="32x32" href="{{asset('favicon/favicon-32x32.png')}}">
 <link rel="icon" type="image/png" sizes="16x16" href="{{asset('favicon/favicon-16x16.png')}}">
 <link rel="manifest" href="{{asset('site.webmanifest')}}">
+
+{{-- Security Headers for Better SEO and Security --}}
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+
+{{-- Preload Critical Assets for Performance --}}
+{{-- Using Vite's asset handling for CSS preloading --}}
 @vite(['resources/scss/app.scss', 'resources/js/app.js'])
 
 <style>
@@ -17,8 +26,25 @@
     @endif
            --color-primary-500: @if(config('settings.color')){{hexToRgb(config('settings.color'))}}@else{{hexToRgb('#8b5cf6')}}@endif;
     }
+    
+    {{-- Critical CSS for Above-Fold Content --}}
+    .min-h-screen { min-height: 100vh; }
+    .dark\:bg-gray-950:is(.dark *) { background-color: rgb(3 7 18); }
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .relative { position: relative; }
+    
+    {{-- Loading optimization --}}
+    [x-cloak] { display: none !important; }
 </style>
+
+{{-- Structured Data for SEO --}}
+@if(isset($config['structured_data']) && $config['structured_data'])
+    {!! $config['structured_data'] !!}
+@endif
+
 {!! config('settings.custom_code') !!}
+
 @if(config('settings.onesignal_id'))
     <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" defer></script>
     <script>

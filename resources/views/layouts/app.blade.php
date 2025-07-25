@@ -3,36 +3,67 @@
       dir="{{app()->getLocale() == 'ar' ? 'rtl' : 'ltr'}}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>@if(isset($config['title']))
-            {{$config['title']}}
-        @else
-            {{config('settings.title')}}
-        @endif</title>
+    {{-- Enhanced SEO Meta Tags --}}
+    <title>@if(isset($config['title'])){{$config['title']}}@else{{config('settings.title')}}@endif</title>
+    
+    <meta name="description" content="@if(isset($config['description'])){{$config['description']}}@else{{config('settings.description')}}@endif">
+    <meta name="keywords" content="@if(isset($config['keywords'])){{$config['keywords']}}@else{{config('settings.keywords', 'streaming, movies, TV shows, watch online, entertainment')}}@endif">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="author" content="{{config('settings.site_name', config('app.name'))}}">
+    <meta name="publisher" content="{{config('settings.site_name', config('app.name'))}}">
+    <meta name="theme-color" content="@if(config('settings.color')){{config('settings.color')}}@else#8b5cf6@endif">
+    
+    {{-- Enhanced Open Graph Tags --}}
+    <meta property="og:title" content="@if(isset($config['title'])){{$config['title']}}@else{{config('settings.title')}}@endif">
+    <meta property="og:description" content="@if(isset($config['description'])){{$config['description']}}@else{{config('settings.description')}}@endif">
+    <meta property="og:type" content="@if(isset($config['og_type'])){{$config['og_type']}}@else website @endif">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:site_name" content="{{config('settings.site_name', config('app.name'))}}">
+    <meta property="og:locale" content="{{app()->getLocale().'_'.strtoupper(app()->getLocale())}}"/>
+    @if(!empty($config['image']))
+        <meta property="og:image" content="{{ $config['image'] }}"/>
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+        <meta property="og:image:alt" content="@if(isset($config['title'])){{$config['title']}}@else{{config('settings.title')}}@endif">
+    @endif
 
-    <meta itemprop="name"
-          content="@if(isset($config['title'])){{$config['title']}}@else{{config('settings.title')}}@endif">
-    <meta itemprop="description"
-          content="@if(isset($config['description'])){{$config['description']}}@else{{config('settings.description')}}@endif">
+    {{-- Enhanced Twitter Card Tags --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@if(config('settings.twitter_handle')){{ '@'.config('settings.twitter_handle') }}@endif">
+    <meta name="twitter:creator" content="@if(config('settings.twitter_handle')){{ '@'.config('settings.twitter_handle') }}@endif">
+    <meta name="twitter:title" content="@if(isset($config['title'])){{$config['title']}}@else{{config('settings.title')}}@endif">
+    <meta name="twitter:description" content="@if(isset($config['description'])){{$config['description']}}@else{{config('settings.description')}}@endif">
+    @if(!empty($config['image']))
+        <meta name="twitter:image" content="{{ $config['image'] }}">
+        <meta name="twitter:image:alt" content="@if(isset($config['title'])){{$config['title']}}@else{{config('settings.title')}}@endif">
+    @endif
+
+    {{-- Schema.org Markup --}}
+    <meta itemprop="name" content="@if(isset($config['title'])){{$config['title']}}@else{{config('settings.title')}}@endif">
+    <meta itemprop="description" content="@if(isset($config['description'])){{$config['description']}}@else{{config('settings.description')}}@endif">
     @if(!empty($config['image']))
         <meta itemprop="image" content="{{ $config['image'] }}">
     @endif
 
-    <meta property="og:title"
-          content="@if(isset($config['title'])){{$config['title']}}@else{{config('settings.title')}}@endif">
-    <meta property="og:description"
-          content="@if(isset($config['description'])){{$config['description']}}@else{{config('settings.description')}}@endif">
-    @if(!empty($config['image']))
-        <meta property="og:image" content="{{ $config['image'] }}"/>
-    @endif
-    <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:locale" content="{{app()->getLocale().'_'.strtoupper(app()->getLocale())}}"/>
-    <meta property="og:type" content="article"/>
-    <meta name="twitter:card" content="summary_large_image">
-
+    {{-- Canonical URL --}}
     <link rel="canonical" href="{{ url()->current() }}"/>
+    
+    {{-- DNS Prefetch for Performance --}}
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    {{-- Alternative Language Links --}}
+    @if(count(config('languages', [])) > 1)
+        @foreach(config('languages', []) as $langCode => $langName)
+            <link rel="alternate" hreflang="{{$langCode}}" href="{{url()->current()}}?lang={{$langCode}}">
+        @endforeach
+        <link rel="alternate" hreflang="x-default" href="{{url()->current()}}">
+    @endif
 
     @include('partials.head')
     @livewireStyles
