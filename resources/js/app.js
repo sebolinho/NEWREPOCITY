@@ -3,6 +3,11 @@ import { Livewire, Alpine } from '../../vendor/livewire/livewire/dist/livewire.e
 
 import tippy from 'tippy.js';
 
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/effect-fade';
+
 import.meta.glob([
     '../img/**',
     '../fonts/**',
