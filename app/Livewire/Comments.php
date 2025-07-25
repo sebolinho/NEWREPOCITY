@@ -50,25 +50,36 @@ class Comments extends Component
     #[On('refresh')]
     public function postComment(): void
     {
-        $this->validate([
-            'newCommentState.body' => 'required|min:5|max:500'
-        ]);
+        try {
+            $this->validate([
+                'newCommentState.body' => 'required|min:5|max:500'
+            ]);
 
+            $comment = $this->model->comments()->make($this->newCommentState);
+            $comment->user()->associate(auth()->user());
+            $comment->status = config('settings.comment_status') == 'active' ? 'draft' : 'publish';
+            $comment->save();
 
-        $comment = $this->model->comments()->make($this->newCommentState);
-        $comment->user()->associate(auth()->user());
-        $comment->status = config('settings.comment_status') == 'active' ? 'draft' : 'publish';
-        $comment->save();
+            $this->newCommentState = [
+                'body' => ''
+            ];
+            $this->users = [];
+            $this->showDropdown = false;
 
-        $this->newCommentState = [
-            'body' => ''
-        ];
-        $this->users = [];
-        $this->showDropdown = false;
-
-        $this->dispatch('show-toast', [ 'message' => __('Posted comment')])->to(NotifyComponent::class);
-        $this->resetPage();
-        session()->flash('message', 'Comment Posted Successfully!');
+            $this->dispatch('show-toast', [ 'message' => __('Posted comment')])->to(NotifyComponent::class);
+            $this->resetPage();
+            session()->flash('message', 'Comment Posted Successfully!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            \Log::error('Error posting comment: ' . $e->getMessage(), [
+                'model_type' => get_class($this->model),
+                'model_id' => $this->model->id,
+                'user_id' => auth()->id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            $this->dispatch('show-toast', ['message' => __('Error posting comment. Please try again.'), 'type' => 'error'])->to(NotifyComponent::class);
+        }
     }
 
     #[On('refresh')]
