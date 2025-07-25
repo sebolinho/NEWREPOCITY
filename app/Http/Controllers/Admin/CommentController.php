@@ -55,8 +55,18 @@ class CommentController extends Controller
     }
     public function destroy($id)
     {
-        Comment::find($id)->delete();
-
-        return redirect()->back()->with('success', __('Deleted'));
+        $comment = Comment::find($id);
+        
+        if (!$comment) {
+            return redirect()->back()->with('error', __('Comment not found'));
+        }
+        
+        try {
+            $comment->delete();
+            return redirect()->back()->with('success', __('Deleted'));
+        } catch (\Exception $e) {
+            \Log::error('Error deleting comment: ' . $e->getMessage());
+            return redirect()->back()->with('error', __('Error deleting comment'));
+        }
     }
 }

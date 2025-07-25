@@ -345,3 +345,164 @@ if (!function_exists('filesizer')) {
         return round($size, $precision).['B','kB','MB','GB','TB','PB','EB','ZB','YB'][$i];
     }
 }
+
+// SEO and Performance Helper Functions
+
+if (!function_exists('generate_schema_org')) {
+    /**
+     * Generate Schema.org JSON-LD markup
+     */
+    function generate_schema_org($type, $data) {
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => $type
+        ];
+        
+        return '<script type="application/ld+json">' . json_encode(array_merge($schema, $data), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>';
+    }
+}
+
+if (!function_exists('optimize_meta_title')) {
+    /**
+     * Optimize meta title for SEO (60 characters max)
+     */
+    function optimize_meta_title($title, $siteName = null) {
+        $siteName = $siteName ?: config('settings.site_name', config('app.name'));
+        $maxLength = 60;
+        
+        if (strlen($title) > $maxLength) {
+            $title = substr($title, 0, $maxLength - 3) . '...';
+        }
+        
+        if ($siteName && !str_contains($title, $siteName)) {
+            $available = $maxLength - strlen($siteName) - 3;
+            if (strlen($title) > $available) {
+                $title = substr($title, 0, $available) . '...';
+            }
+            $title .= ' | ' . $siteName;
+        }
+        
+        return $title;
+    }
+}
+
+if (!function_exists('optimize_meta_description')) {
+    /**
+     * Optimize meta description for SEO (160 characters max)
+     */
+    function optimize_meta_description($description) {
+        $maxLength = 160;
+        
+        if (strlen($description) > $maxLength) {
+            $description = substr($description, 0, $maxLength - 3) . '...';
+        }
+        
+        return $description;
+    }
+}
+
+if (!function_exists('generate_breadcrumb_schema')) {
+    /**
+     * Generate breadcrumb Schema.org markup
+     */
+    function generate_breadcrumb_schema($breadcrumbs) {
+        $items = [];
+        $position = 1;
+        
+        foreach ($breadcrumbs as $breadcrumb) {
+            $items[] = [
+                '@type' => 'ListItem',
+                'position' => $position++,
+                'name' => $breadcrumb['name'],
+                'item' => $breadcrumb['url']
+            ];
+        }
+        
+        return generate_schema_org('BreadcrumbList', [
+            'itemListElement' => $items
+        ]);
+    }
+}
+
+if (!function_exists('preload_critical_resource')) {
+    /**
+     * Generate preload link tag for critical resources
+     */
+    function preload_critical_resource($href, $as, $type = null, $crossorigin = false) {
+        $attrs = [
+            'rel="preload"',
+            'href="' . $href . '"',
+            'as="' . $as . '"'
+        ];
+        
+        if ($type) {
+            $attrs[] = 'type="' . $type . '"';
+        }
+        
+        if ($crossorigin) {
+            $attrs[] = 'crossorigin';
+        }
+        
+        return '<link ' . implode(' ', $attrs) . '>';
+    }
+}
+
+if (!function_exists('generate_webp_source')) {
+    /**
+     * Generate WebP source with fallback for picture element
+     */
+    function generate_webp_source($imagePath, $alt = '', $class = '', $sizes = null) {
+        $webpPath = webper($imagePath);
+        
+        $sourcesTag = '<source srcset="' . $webpPath . '" type="image/webp"';
+        if ($sizes) {
+            $sourcesTag .= ' sizes="' . $sizes . '"';
+        }
+        $sourcesTag .= '>';
+        
+        $imgTag = '<img src="' . $imagePath . '" alt="' . $alt . '" class="' . $class . '"';
+        if ($sizes) {
+            $imgTag .= ' sizes="' . $sizes . '"';
+        }
+        $imgTag .= ' loading="lazy" decoding="async">';
+        
+        return '<picture>' . $sourcesTag . $imgTag . '</picture>';
+    }
+}
+
+if (!function_exists('cache_buster')) {
+    /**
+     * Add cache buster to asset URLs for better cache control
+     */
+    function cache_buster($url) {
+        if (app()->environment('production')) {
+            $version = config('app.version', '1.0.0');
+            return $url . '?v=' . $version;
+        }
+        
+        return $url . '?v=' . time();
+    }
+}
+
+if (!function_exists('safe_json_encode')) {
+    /**
+     * Safely encode data for JavaScript usage
+     */
+    function safe_json_encode($data) {
+        return htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
+    }
+}
+
+if (!function_exists('truncate_words')) {
+    /**
+     * Truncate text by word count while preserving HTML
+     */
+    function truncate_words($text, $limit = 50, $end = '...') {
+        if (str_word_count($text, 0) > $limit) {
+            $words = str_word_count($text, 2);
+            $pos = array_keys($words);
+            $text = substr($text, 0, $pos[$limit]) . $end;
+        }
+        return $text;
+    }
+}
