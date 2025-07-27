@@ -193,9 +193,10 @@ class BrowseController extends Controller
                         )
                 ]);
         } elseif ($request->route()->getName() == __('genre') and $request->route()->genre) {
-            $genre = Genre::where('slug', $request->route()->genre)->firstOrFail() ?? abort(404);
-            $param['heading'] = $genre->title;
-            $param['genre'][] = $genre->id;
+            try {
+                $genre = Genre::where('slug', $request->route()->genre)->firstOrFail();
+                $param['heading'] = $genre->title;
+                $param['genre'][] = $genre->id;
 
             $new = array(
                 $request->sort ? __(config('attr.sortable')[$request->sort]['title']) : null,
@@ -207,26 +208,34 @@ class BrowseController extends Controller
                 trim(config('settings.genre_title'))));
             $config['description'] = $genre->meta_description ?? trim(str_replace($old, $new,
                 trim(config('settings.genre_description'))));
-            $config['breadcrumb'] = Schema::breadcrumbList()
-                ->itemListElement([
-                    Schema::listItem()
-                        ->position(1)
-                        ->item(
-                            Schema::thing()
-                                ->name(__('Home'))
-                                ->id(route('index'))
-                        ),
-                    Schema::listItem()
-                        ->position(2)
-                        ->item(
-                            Schema::thing()
-                                ->name($genre->title)
-                                ->id(route('genre', $genre->slug))
-                        )
+                $config['breadcrumb'] = Schema::breadcrumbList()
+                    ->itemListElement([
+                        Schema::listItem()
+                            ->position(1)
+                            ->item(
+                                Schema::thing()
+                                    ->name(__('Home'))
+                                    ->id(route('index'))
+                            ),
+                        Schema::listItem()
+                            ->position(2)
+                            ->item(
+                                Schema::thing()
+                                    ->name($genre->title)
+                                    ->id(route('genre', $genre->slug))
+                            )
+                    ]);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                \Log::warning('Genre not found: ' . $request->route()->genre, [
+                    'genre_slug' => $request->route()->genre,
+                    'user_id' => auth()->id()
                 ]);
+                abort(404);
+            }
         } elseif ($request->route()->getName() == __('country') and $request->route()->country) {
-            $country = Country::where('slug', $request->route()->country)->firstOrFail() ?? abort(404);
-            $param['heading'] = $country->name;
+            try {
+                $country = Country::where('slug', $request->route()->country)->firstOrFail();
+                $param['heading'] = $country->name;
             $new = array(
                 $request->sort ? __(config('attr.sortable')[$request->sort]['title']) : null,
                 $country->name
@@ -235,23 +244,30 @@ class BrowseController extends Controller
 
             $config['title'] = trim(str_replace($old, $new, trim(config('settings.country_title'))));
             $config['description'] = trim(str_replace($old, $new, trim(config('settings.country_description'))));
-            $config['breadcrumb'] = Schema::breadcrumbList()
-                ->itemListElement([
-                    Schema::listItem()
-                        ->position(1)
-                        ->item(
-                            Schema::thing()
-                                ->name(__('Home'))
-                                ->id(route('index'))
-                        ),
-                    Schema::listItem()
-                        ->position(2)
-                        ->item(
-                            Schema::thing()
-                                ->name($country->name)
-                                ->id(route('country', $country->slug))
-                        )
+                $config['breadcrumb'] = Schema::breadcrumbList()
+                    ->itemListElement([
+                        Schema::listItem()
+                            ->position(1)
+                            ->item(
+                                Schema::thing()
+                                    ->name(__('Home'))
+                                    ->id(route('index'))
+                            ),
+                        Schema::listItem()
+                            ->position(2)
+                            ->item(
+                                Schema::thing()
+                                    ->name($country->name)
+                                    ->id(route('country', $country->slug))
+                            )
+                    ]);
+            } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                \Log::warning('Country not found: ' . $request->route()->country, [
+                    'country_slug' => $request->route()->country,
+                    'user_id' => auth()->id()
                 ]);
+                abort(404);
+            }
         } elseif ($request->route()->getName() == 'search') {
             $param['heading'] = __('Search results for ":search"', ['search' => $request->route('search')]);
             $new = array(
@@ -345,18 +361,33 @@ class BrowseController extends Controller
 
     public function people(Request $request, $slug)
     {
-        $listing = People::where('slug', $slug)->firstOrFail() ?? abort(404);
+        try {
+            $listing = People::where('slug', $slug)->firstOrFail();
 
-        ## SEO ##
-        $new = array(
-            $listing->name
-        );
-        $old = array('[title]');
-        $config['title'] = trim(str_replace($old, $new, trim(config('settings.people_title'))));
-        $config['description'] = trim(str_replace($old, $new, trim(config('settings.people_description'))));
-        ## SEO ##
+            ## SEO ##
+            $new = array(
+                $listing->name
+            );
+            $old = array('[title]');
+            $config['title'] = trim(str_replace($old, $new, trim(config('settings.people_title'))));
+            $config['description'] = trim(str_replace($old, $new, trim(config('settings.people_description'))));
+            ## SEO ##
 
-        return view('browse.people', compact('config', 'listing'));
+            return view('browse.people', compact('config', 'listing'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::warning('Person not found: ' . $slug, [
+                'slug' => $slug,
+                'user_id' => auth()->id()
+            ]);
+            abort(404);
+        } catch (\Exception $e) {
+            \Log::error('Error loading person page: ' . $e->getMessage(), [
+                'slug' => $slug,
+                'user_id' => auth()->id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            abort(500);
+        }
     }
 
     public function find(Request $request)
@@ -402,16 +433,31 @@ class BrowseController extends Controller
 
     public function discussion(Request $request, $slug)
     {
-        $listing = Community::where('slug', $slug)->firstOrFail() ?? abort(404);
+        try {
+            $listing = Community::where('slug', $slug)->firstOrFail();
 
-        $config = [
-            'title' => __('Movie'),
-            'route' => 'movie',
-            'nav' => 'movie',
-        ];
-        $newests = Community::withCount('comment')->limit(6)->get();
+            $config = [
+                'title' => __('Movie'),
+                'route' => 'movie',
+                'nav' => 'movie',
+            ];
+            $newests = Community::withCount('comment')->limit(6)->get();
 
-        return view('browse.discussion', compact('config', 'listing', 'newests'));
+            return view('browse.discussion', compact('config', 'listing', 'newests'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::warning('Discussion not found: ' . $slug, [
+                'slug' => $slug,
+                'user_id' => auth()->id()
+            ]);
+            abort(404);
+        } catch (\Exception $e) {
+            \Log::error('Error loading discussion page: ' . $e->getMessage(), [
+                'slug' => $slug,
+                'user_id' => auth()->id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            abort(500);
+        }
     }
 
 
@@ -446,21 +492,36 @@ class BrowseController extends Controller
 
     public function collection(Request $request, $slug)
     {
-        $listing = Collection::where('slug', $slug)->firstOrFail() ?? abort(404);
+        try {
+            $listing = Collection::where('slug', $slug)->firstOrFail();
 
-        ## SEO ##
-        $new = array(
-            $listing->title
-        );
-        $old = array('[title]');
-        $config['title'] = trim(str_replace($old, $new, trim(config('settings.collection_title'))));
-        $config['description'] = trim(str_replace($old, $new, trim(config('settings.collection_description'))));
+            ## SEO ##
+            $new = array(
+                $listing->title
+            );
+            $old = array('[title]');
+            $config['title'] = trim(str_replace($old, $new, trim(config('settings.collection_title'))));
+            $config['description'] = trim(str_replace($old, $new, trim(config('settings.collection_description'))));
 
-        $config['route'] = route('collections');
-        $config['heading'] = __('Collections');
-        ## SEO ##
+            $config['route'] = route('collections');
+            $config['heading'] = __('Collections');
+            ## SEO ##
 
-        return view('browse.collection', compact('config', 'listing'));
+            return view('browse.collection', compact('config', 'listing'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::warning('Collection not found: ' . $slug, [
+                'slug' => $slug,
+                'user_id' => auth()->id()
+            ]);
+            abort(404);
+        } catch (\Exception $e) {
+            \Log::error('Error loading collection page: ' . $e->getMessage(), [
+                'slug' => $slug,
+                'user_id' => auth()->id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            abort(500);
+        }
     }
 
     public function collections(Request $request)
@@ -478,17 +539,33 @@ class BrowseController extends Controller
 
     public function tag(Request $request, $tag)
     {
-        $listing = Tag::where('slug', $tag)->firstOrFail() ?? abort(404);
-        $posts = $listing->posts()->paginate(!config('settings.listing_limit') ? 24 : config('settings.listing_limit'));
+        try {
+            $listing = Tag::where('slug', $tag)->firstOrFail();
+            $posts = $listing->posts()->paginate(!config('settings.listing_limit') ? 24 : config('settings.listing_limit'));
 
-        ## SEO ##
-        $new = array(
-            $listing->tag
-        );
-        $old = array('[tag]');
-        $config['title'] = trim(str_replace($old, $new, trim(config('settings.tag_title'))));
-        $config['description'] = trim(str_replace($old, $new, trim(config('settings.tag_description'))));
-        ## SEO ##
-        return view('browse.tag', compact('config', 'listing', 'posts'));
+            ## SEO ##
+            $new = array(
+                $listing->tag
+            );
+            $old = array('[tag]');
+            $config['title'] = trim(str_replace($old, $new, trim(config('settings.tag_title'))));
+            $config['description'] = trim(str_replace($old, $new, trim(config('settings.tag_description'))));
+            ## SEO ##
+            
+            return view('browse.tag', compact('config', 'listing', 'posts'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::warning('Tag not found: ' . $tag, [
+                'tag' => $tag,
+                'user_id' => auth()->id()
+            ]);
+            abort(404);
+        } catch (\Exception $e) {
+            \Log::error('Error loading tag page: ' . $e->getMessage(), [
+                'tag' => $tag,
+                'user_id' => auth()->id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            abort(500);
+        }
     }
 }
