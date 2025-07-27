@@ -1,226 +1,210 @@
 {
   "_alpine-l0sNRNKZ.js": {
-    "file": "assets/alpine-l0sNRNKZ.js",
+    "file": "assets/js/alpine-l0sNRNKZ.js",
     "name": "alpine"
   },
   "_swiper-l0sNRNKZ.js": {
-    "file": "assets/swiper-l0sNRNKZ.js",
+    "file": "assets/js/swiper-l0sNRNKZ.js",
     "name": "swiper"
   },
-  "_vendor-C-53TVFr.js": {
-    "file": "assets/vendor-C-53TVFr.js",
-    "name": "vendor"
+  "_tippy-D5uH3rDF.js": {
+    "file": "assets/js/tippy-D5uH3rDF.js",
+    "name": "tippy"
   },
   "resources/fonts/Inter-Black.woff": {
-    "file": "assets/Inter-Black-DtxVgCT8.woff",
+    "file": "assets/fonts/Inter-Black-DtxVgCT8.woff",
     "src": "resources/fonts/Inter-Black.woff"
   },
   "resources/fonts/Inter-Black.woff2": {
-    "file": "assets/Inter-Black-DgUKMdlB.woff2",
+    "file": "assets/fonts/Inter-Black-DgUKMdlB.woff2",
     "src": "resources/fonts/Inter-Black.woff2"
   },
   "resources/fonts/Inter-BlackItalic.woff": {
-    "file": "assets/Inter-BlackItalic-CkZ-ktDH.woff",
+    "file": "assets/fonts/Inter-BlackItalic-CkZ-ktDH.woff",
     "src": "resources/fonts/Inter-BlackItalic.woff"
   },
   "resources/fonts/Inter-BlackItalic.woff2": {
-    "file": "assets/Inter-BlackItalic-ZFcDzO3e.woff2",
+    "file": "assets/fonts/Inter-BlackItalic-ZFcDzO3e.woff2",
     "src": "resources/fonts/Inter-BlackItalic.woff2"
   },
   "resources/fonts/Inter-Bold.woff": {
-    "file": "assets/Inter-Bold-2PT7Q-hu.woff",
+    "file": "assets/fonts/Inter-Bold-2PT7Q-hu.woff",
     "src": "resources/fonts/Inter-Bold.woff"
   },
   "resources/fonts/Inter-Bold.woff2": {
-    "file": "assets/Inter-Bold-CuhepTt8.woff2",
+    "file": "assets/fonts/Inter-Bold-CuhepTt8.woff2",
     "src": "resources/fonts/Inter-Bold.woff2"
   },
   "resources/fonts/Inter-BoldItalic.woff": {
-    "file": "assets/Inter-BoldItalic-C906RMVC.woff",
+    "file": "assets/fonts/Inter-BoldItalic-C906RMVC.woff",
     "src": "resources/fonts/Inter-BoldItalic.woff"
   },
   "resources/fonts/Inter-BoldItalic.woff2": {
-    "file": "assets/Inter-BoldItalic-R15IsAnq.woff2",
+    "file": "assets/fonts/Inter-BoldItalic-R15IsAnq.woff2",
     "src": "resources/fonts/Inter-BoldItalic.woff2"
   },
   "resources/fonts/Inter-ExtraBold.woff": {
-    "file": "assets/Inter-ExtraBold-B8imQN9B.woff",
+    "file": "assets/fonts/Inter-ExtraBold-B8imQN9B.woff",
     "src": "resources/fonts/Inter-ExtraBold.woff"
   },
   "resources/fonts/Inter-ExtraBold.woff2": {
-    "file": "assets/Inter-ExtraBold-B0QOs-T2.woff2",
+    "file": "assets/fonts/Inter-ExtraBold-B0QOs-T2.woff2",
     "src": "resources/fonts/Inter-ExtraBold.woff2"
   },
   "resources/fonts/Inter-ExtraBoldItalic.woff": {
-    "file": "assets/Inter-ExtraBoldItalic-Bt8eprh6.woff",
+    "file": "assets/fonts/Inter-ExtraBoldItalic-Bt8eprh6.woff",
     "src": "resources/fonts/Inter-ExtraBoldItalic.woff"
   },
   "resources/fonts/Inter-ExtraBoldItalic.woff2": {
-    "file": "assets/Inter-ExtraBoldItalic-OErwaGem.woff2",
+    "file": "assets/fonts/Inter-ExtraBoldItalic-OErwaGem.woff2",
     "src": "resources/fonts/Inter-ExtraBoldItalic.woff2"
   },
   "resources/fonts/Inter-ExtraLight.woff": {
-    "file": "assets/Inter-ExtraLight-CbFdmbHh.woff",
+    "file": "assets/fonts/Inter-ExtraLight-CbFdmbHh.woff",
     "src": "resources/fonts/Inter-ExtraLight.woff"
   },
   "resources/fonts/Inter-ExtraLight.woff2": {
-    "file": "assets/Inter-ExtraLight-egkqWonf.woff2",
+    "file": "assets/fonts/Inter-ExtraLight-egkqWonf.woff2",
     "src": "resources/fonts/Inter-ExtraLight.woff2"
   },
   "resources/fonts/Inter-ExtraLightItalic.woff": {
-    "file": "assets/Inter-ExtraLightItalic-B3gY-m5W.woff",
+    "file": "assets/fonts/Inter-ExtraLightItalic-B3gY-m5W.woff",
     "src": "resources/fonts/Inter-ExtraLightItalic.woff"
   },
   "resources/fonts/Inter-ExtraLightItalic.woff2": {
-    "file": "assets/Inter-ExtraLightItalic-Bf25KIHs.woff2",
+    "file": "assets/fonts/Inter-ExtraLightItalic-Bf25KIHs.woff2",
     "src": "resources/fonts/Inter-ExtraLightItalic.woff2"
   },
   "resources/fonts/Inter-Italic.woff": {
-    "file": "assets/Inter-Italic-Ci_5KQU1.woff",
+    "file": "assets/fonts/Inter-Italic-Ci_5KQU1.woff",
     "src": "resources/fonts/Inter-Italic.woff"
   },
   "resources/fonts/Inter-Italic.woff2": {
-    "file": "assets/Inter-Italic-_3PMmu0i.woff2",
+    "file": "assets/fonts/Inter-Italic-_3PMmu0i.woff2",
     "src": "resources/fonts/Inter-Italic.woff2"
   },
   "resources/fonts/Inter-Light.woff": {
-    "file": "assets/Inter-Light-CG9upfZ4.woff",
+    "file": "assets/fonts/Inter-Light-CG9upfZ4.woff",
     "src": "resources/fonts/Inter-Light.woff"
   },
   "resources/fonts/Inter-Light.woff2": {
-    "file": "assets/Inter-Light-CdXm_ABL.woff2",
+    "file": "assets/fonts/Inter-Light-CdXm_ABL.woff2",
     "src": "resources/fonts/Inter-Light.woff2"
   },
   "resources/fonts/Inter-LightItalic.woff": {
-    "file": "assets/Inter-LightItalic-C2ZuFZOC.woff",
+    "file": "assets/fonts/Inter-LightItalic-C2ZuFZOC.woff",
     "src": "resources/fonts/Inter-LightItalic.woff"
   },
   "resources/fonts/Inter-LightItalic.woff2": {
-    "file": "assets/Inter-LightItalic-COmGGTuG.woff2",
+    "file": "assets/fonts/Inter-LightItalic-COmGGTuG.woff2",
     "src": "resources/fonts/Inter-LightItalic.woff2"
   },
   "resources/fonts/Inter-Medium.woff": {
-    "file": "assets/Inter-Medium-oHczPpWt.woff",
+    "file": "assets/fonts/Inter-Medium-oHczPpWt.woff",
     "src": "resources/fonts/Inter-Medium.woff"
   },
   "resources/fonts/Inter-Medium.woff2": {
-    "file": "assets/Inter-Medium-P1cOs5ep.woff2",
+    "file": "assets/fonts/Inter-Medium-P1cOs5ep.woff2",
     "src": "resources/fonts/Inter-Medium.woff2"
   },
   "resources/fonts/Inter-MediumItalic.woff": {
-    "file": "assets/Inter-MediumItalic-8laNK8GF.woff",
+    "file": "assets/fonts/Inter-MediumItalic-8laNK8GF.woff",
     "src": "resources/fonts/Inter-MediumItalic.woff"
   },
   "resources/fonts/Inter-MediumItalic.woff2": {
-    "file": "assets/Inter-MediumItalic-DWiIAHvp.woff2",
+    "file": "assets/fonts/Inter-MediumItalic-DWiIAHvp.woff2",
     "src": "resources/fonts/Inter-MediumItalic.woff2"
   },
   "resources/fonts/Inter-Regular.woff": {
-    "file": "assets/Inter-Regular-DJOZHnwz.woff",
+    "file": "assets/fonts/Inter-Regular-DJOZHnwz.woff",
     "src": "resources/fonts/Inter-Regular.woff"
   },
   "resources/fonts/Inter-Regular.woff2": {
-    "file": "assets/Inter-Regular-CKDp9E3C.woff2",
+    "file": "assets/fonts/Inter-Regular-CKDp9E3C.woff2",
     "src": "resources/fonts/Inter-Regular.woff2"
   },
   "resources/fonts/Inter-SemiBold.woff": {
-    "file": "assets/Inter-SemiBold-BHlX_6qk.woff",
+    "file": "assets/fonts/Inter-SemiBold-BHlX_6qk.woff",
     "src": "resources/fonts/Inter-SemiBold.woff"
   },
   "resources/fonts/Inter-SemiBold.woff2": {
-    "file": "assets/Inter-SemiBold-Ctx7G98q.woff2",
+    "file": "assets/fonts/Inter-SemiBold-Ctx7G98q.woff2",
     "src": "resources/fonts/Inter-SemiBold.woff2"
   },
   "resources/fonts/Inter-SemiBoldItalic.woff": {
-    "file": "assets/Inter-SemiBoldItalic-CxeAX7g8.woff",
+    "file": "assets/fonts/Inter-SemiBoldItalic-CxeAX7g8.woff",
     "src": "resources/fonts/Inter-SemiBoldItalic.woff"
   },
   "resources/fonts/Inter-SemiBoldItalic.woff2": {
-    "file": "assets/Inter-SemiBoldItalic-BNz1Al2H.woff2",
+    "file": "assets/fonts/Inter-SemiBoldItalic-BNz1Al2H.woff2",
     "src": "resources/fonts/Inter-SemiBoldItalic.woff2"
   },
   "resources/fonts/Inter-Thin.woff": {
-    "file": "assets/Inter-Thin-CVMZtQER.woff",
+    "file": "assets/fonts/Inter-Thin-CVMZtQER.woff",
     "src": "resources/fonts/Inter-Thin.woff"
   },
   "resources/fonts/Inter-Thin.woff2": {
-    "file": "assets/Inter-Thin-CSJ_owlW.woff2",
+    "file": "assets/fonts/Inter-Thin-CSJ_owlW.woff2",
     "src": "resources/fonts/Inter-Thin.woff2"
   },
   "resources/fonts/Inter-ThinItalic.woff": {
-    "file": "assets/Inter-ThinItalic-B2bFwwDp.woff",
+    "file": "assets/fonts/Inter-ThinItalic-B2bFwwDp.woff",
     "src": "resources/fonts/Inter-ThinItalic.woff"
   },
   "resources/fonts/Inter-ThinItalic.woff2": {
-    "file": "assets/Inter-ThinItalic-B6FKq6qK.woff2",
+    "file": "assets/fonts/Inter-ThinItalic-B6FKq6qK.woff2",
     "src": "resources/fonts/Inter-ThinItalic.woff2"
   },
   "resources/fonts/Inter-italic.var.woff2": {
-    "file": "assets/Inter-italic.var-DhD-tpjY.woff2",
+    "file": "assets/fonts/Inter-italic.var-DhD-tpjY.woff2",
     "src": "resources/fonts/Inter-italic.var.woff2"
   },
   "resources/fonts/Inter-roman.var.woff2": {
-    "file": "assets/Inter-roman.var-C-r5W2Hj.woff2",
+    "file": "assets/fonts/Inter-roman.var-C-r5W2Hj.woff2",
     "src": "resources/fonts/Inter-roman.var.woff2"
   },
   "resources/fonts/Inter.var.woff2": {
-    "file": "assets/Inter.var-CTiC9fjq.woff2",
+    "file": "assets/fonts/Inter.var-CTiC9fjq.woff2",
     "src": "resources/fonts/Inter.var.woff2"
   },
   "resources/img/ai.svg": {
-    "file": "assets/ai-CtRvRq09.svg",
+    "file": "assets/images/ai-CtRvRq09.svg",
     "src": "resources/img/ai.svg"
   },
   "resources/img/change.svg": {
-    "file": "assets/change-CxIVSucD.svg",
+    "file": "assets/images/change-CxIVSucD.svg",
     "src": "resources/img/change.svg"
   },
   "resources/img/hero.svg": {
-    "file": "assets/hero-Bcw0-477.svg",
+    "file": "assets/images/hero-Bcw0-477.svg",
     "src": "resources/img/hero.svg"
   },
   "resources/img/jquery.minicolors.png": {
-    "file": "assets/jquery.minicolors-DuhFDKu9.png",
+    "file": "assets/images/jquery.minicolors-DuhFDKu9.png",
     "src": "resources/img/jquery.minicolors.png"
   },
-  "resources/img/payment/bank.svg": {
-    "file": "assets/bank-D87XWRiC.svg",
-    "src": "resources/img/payment/bank.svg"
-  },
-  "resources/img/payment/coinbase.svg": {
-    "file": "assets/coinbase-jxMbp7Fw.svg",
-    "src": "resources/img/payment/coinbase.svg"
-  },
   "resources/img/payment/paypal.svg": {
-    "file": "assets/paypal-DhbRUPni.svg",
+    "file": "assets/images/paypal-DhbRUPni.svg",
     "src": "resources/img/payment/paypal.svg"
   },
-  "resources/img/payment/stripe.svg": {
-    "file": "assets/stripe-qyb1alG1.svg",
-    "src": "resources/img/payment/stripe.svg"
-  },
-  "resources/img/shape.svg": {
-    "file": "assets/shape-Cii07m5Y.svg",
-    "src": "resources/img/shape.svg"
-  },
   "resources/img/texture.webp": {
-    "file": "assets/texture-_wx1kN7-.webp",
+    "file": "assets/images/texture-_wx1kN7-.webp",
     "src": "resources/img/texture.webp"
   },
   "resources/js/app.js": {
-    "file": "assets/app-BSTO0XVl.js",
+    "file": "assets/js/app-BNnoXpBp.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vendor-C-53TVFr.js"
+      "_tippy-D5uH3rDF.js"
     ],
     "css": [
-      "assets/app-Cg4GiC7M.css"
+      "assets/css/app-v68JFbmK.css"
     ]
   },
   "resources/scss/app.scss": {
-    "file": "assets/app-B8ux4its.css",
+    "file": "assets/css/app-V-sTekOl.css",
     "src": "resources/scss/app.scss",
     "isEntry": true,
     "names": [

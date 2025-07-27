@@ -506,3 +506,255 @@ if (!function_exists('truncate_words')) {
         return $text;
     }
 }
+
+// Enhanced Streaming Platform SEO Functions
+
+if (!function_exists('generate_video_schema')) {
+    /**
+     * Generate video/movie Schema.org markup for streaming content
+     */
+    function generate_video_schema($video) {
+        $schema = [
+            'name' => $video['title'] ?? $video['name'],
+            'description' => optimize_meta_description($video['overview'] ?? $video['description'] ?? ''),
+            'thumbnailUrl' => $video['poster'] ?? $video['thumbnail'] ?? '',
+            'contentUrl' => $video['url'] ?? '',
+            'embedUrl' => $video['embed_url'] ?? '',
+            'uploadDate' => $video['release_date'] ?? $video['created_at'] ?? '',
+            'duration' => isset($video['runtime']) ? 'PT' . $video['runtime'] . 'M' : null,
+            'genre' => $video['genres'] ?? [],
+            'actor' => $video['cast'] ?? [],
+            'director' => $video['director'] ?? [],
+            'aggregateRating' => isset($video['vote_average']) ? [
+                '@type' => 'AggregateRating',
+                'ratingValue' => $video['vote_average'],
+                'ratingCount' => $video['vote_count'] ?? 1,
+                'bestRating' => 10
+            ] : null
+        ];
+        
+        $type = isset($video['episode_count']) ? 'TVSeries' : 'Movie';
+        
+        return generate_schema_org($type, array_filter($schema));
+    }
+}
+
+if (!function_exists('generate_critical_css')) {
+    /**
+     * Generate critical CSS inline for above-the-fold content
+     */
+    function generate_critical_css() {
+        return '<style>
+            /* Critical above-the-fold styles */
+            body{margin:0;padding:0;font-family:Inter,sans-serif;font-display:swap}
+            .hero-section{min-height:50vh;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}
+            .navigation{position:fixed;top:0;width:100%;z-index:1000;backdrop-filter:blur(10px)}
+            .container{max-width:1200px;margin:0 auto;padding:0 1rem}
+            .loading{opacity:0;animation:fadeIn 0.3s ease-in-out forwards}
+            @keyframes fadeIn{to{opacity:1}}
+            .lazy-loading{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:loading 1.5s infinite}
+            @keyframes loading{0%{background-position:200% 0}100%{background-position:-200% 0}}
+        </style>';
+    }
+}
+
+if (!function_exists('optimize_image_attrs')) {
+    /**
+     * Generate optimized image attributes for better performance
+     */
+    function optimize_image_attrs($src, $alt = '', $width = null, $height = null, $lazy = true) {
+        $attrs = [
+            'src' => $src,
+            'alt' => $alt,
+            'decoding' => 'async'
+        ];
+        
+        if ($width) $attrs['width'] = $width;
+        if ($height) $attrs['height'] = $height;
+        
+        if ($lazy) {
+            $attrs['loading'] = 'lazy';
+            $attrs['data-src'] = $src;
+            $attrs['src'] = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . ($width ?? 300) . ' ' . ($height ?? 200) . '"%3E%3C/svg%3E';
+        }
+        
+        return array_map(function($key, $value) {
+            return $key . '="' . htmlspecialchars($value) . '"';
+        }, array_keys($attrs), $attrs);
+    }
+}
+
+if (!function_exists('generate_preconnect_hints')) {
+    /**
+     * Generate DNS preconnect hints for external resources
+     */
+    function generate_preconnect_hints() {
+        $domains = [
+            'https://fonts.googleapis.com',
+            'https://fonts.gstatic.com',
+            'https://api.themoviedb.org',
+            'https://image.tmdb.org',
+            'https://www.google-analytics.com',
+            'https://googletagmanager.com'
+        ];
+        
+        $links = '';
+        foreach ($domains as $domain) {
+            $links .= '<link rel="preconnect" href="' . $domain . '" crossorigin>' . "\n";
+        }
+        
+        return $links;
+    }
+}
+
+if (!function_exists('generate_resource_hints')) {
+    /**
+     * Generate resource hints for better loading performance
+     */
+    function generate_resource_hints($resources = []) {
+        $hints = '';
+        
+        // Default critical resources
+        $defaultResources = [
+            ['href' => asset('css/app.css'), 'as' => 'style'],
+            ['href' => asset('js/app.js'), 'as' => 'script'],
+            ['href' => 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap', 'as' => 'style', 'crossorigin' => true]
+        ];
+        
+        $allResources = array_merge($defaultResources, $resources);
+        
+        foreach ($allResources as $resource) {
+            $hints .= '<link rel="preload" href="' . $resource['href'] . '" as="' . $resource['as'] . '"';
+            if (isset($resource['type'])) {
+                $hints .= ' type="' . $resource['type'] . '"';
+            }
+            if (isset($resource['crossorigin'])) {
+                $hints .= ' crossorigin';
+            }
+            $hints .= '>' . "\n";
+        }
+        
+        return $hints;
+    }
+}
+
+if (!function_exists('generate_sitemap_entry')) {
+    /**
+     * Generate sitemap entry for content
+     */
+    function generate_sitemap_entry($url, $lastmod = null, $changefreq = 'weekly', $priority = '0.8') {
+        return [
+            'loc' => $url,
+            'lastmod' => $lastmod ?: now()->toISOString(),
+            'changefreq' => $changefreq,
+            'priority' => $priority
+        ];
+    }
+}
+
+if (!function_exists('optimize_heading_structure')) {
+    /**
+     * Optimize heading structure for SEO
+     */
+    function optimize_heading_structure($content) {
+        // Ensure proper heading hierarchy
+        $content = preg_replace_callback('/<h([1-6])[^>]*>(.*?)<\/h[1-6]>/i', function($matches) {
+            $level = intval($matches[1]);
+            $text = $matches[2];
+            
+            // Add proper semantic structure
+            return '<h' . $level . ' class="heading-' . $level . '">' . $text . '</h' . $level . '>';
+        }, $content);
+        
+        return $content;
+    }
+}
+
+if (!function_exists('generate_video_structured_data')) {
+    /**
+     * Generate comprehensive video structured data for streaming platform
+     */
+    function generate_video_structured_data($item) {
+        if (isset($item->type) && $item->type === 'tv') {
+            return generate_tv_series_schema($item);
+        } else {
+            return generate_movie_schema($item);
+        }
+    }
+}
+
+if (!function_exists('generate_movie_schema')) {
+    /**
+     * Generate movie-specific schema
+     */
+    function generate_movie_schema($movie) {
+        $schema = [
+            'name' => $movie->title,
+            'alternateName' => $movie->original_title ?? $movie->title,
+            'description' => optimize_meta_description($movie->overview ?? ''),
+            'image' => $movie->poster ?? '',
+            'datePublished' => $movie->release_date ?? '',
+            'genre' => array_map(function($genre) { return $genre['name']; }, $movie->genres ?? []),
+            'duration' => isset($movie->runtime) ? 'PT' . $movie->runtime . 'M' : null,
+            'contentRating' => $movie->certification ?? '',
+            'aggregateRating' => [
+                '@type' => 'AggregateRating',
+                'ratingValue' => $movie->vote_average ?? 0,
+                'ratingCount' => $movie->vote_count ?? 1,
+                'bestRating' => 10
+            ],
+            'url' => url()->current(),
+            'sameAs' => isset($movie->imdb_id) ? 'https://www.imdb.com/title/' . $movie->imdb_id : null
+        ];
+        
+        return generate_schema_org('Movie', array_filter($schema));
+    }
+}
+
+if (!function_exists('generate_tv_series_schema')) {
+    /**
+     * Generate TV series-specific schema
+     */
+    function generate_tv_series_schema($series) {
+        $schema = [
+            'name' => $series->name,
+            'alternateName' => $series->original_name ?? $series->name,
+            'description' => optimize_meta_description($series->overview ?? ''),
+            'image' => $series->poster ?? '',
+            'startDate' => $series->first_air_date ?? '',
+            'endDate' => $series->last_air_date ?? '',
+            'numberOfSeasons' => $series->number_of_seasons ?? 1,
+            'numberOfEpisodes' => $series->number_of_episodes ?? 1,
+            'genre' => array_map(function($genre) { return $genre['name']; }, $series->genres ?? []),
+            'aggregateRating' => [
+                '@type' => 'AggregateRating',
+                'ratingValue' => $series->vote_average ?? 0,
+                'ratingCount' => $series->vote_count ?? 1,
+                'bestRating' => 10
+            ],
+            'url' => url()->current()
+        ];
+        
+        return generate_schema_org('TVSeries', array_filter($schema));
+    }
+}
+
+if (!function_exists('generate_person_schema')) {
+    /**
+     * Generate person schema for cast/crew
+     */
+    function generate_person_schema($person) {
+        $schema = [
+            'name' => $person->name,
+            'image' => $person->profile_path ?? '',
+            'description' => $person->biography ?? '',
+            'birthDate' => $person->birthday ?? '',
+            'deathDate' => $person->deathday ?? null,
+            'birthPlace' => $person->place_of_birth ?? '',
+            'url' => url()->current(),
+            'sameAs' => isset($person->imdb_id) ? 'https://www.imdb.com/name/' . $person->imdb_id : null
+        ];
+        
+        return generate_schema_org('Person', array_filter($schema));
+    }
+}
