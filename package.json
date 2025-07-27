@@ -8,7 +8,11 @@
         "optimize": "./optimize.sh",
         "audit-fix": "npm audit fix",
         "clean": "rm -rf node_modules package-lock.json && npm install",
-        "production": "npm run build && npm run optimize"
+        "production": "npm run build && npm run optimize",
+        "pagespeed": "php artisan optimize:max-pagespeed",
+        "performance": "npm run build && php artisan optimize:max-pagespeed && php artisan optimize:clear-all",
+        "lighthouse": "lighthouse --chrome-flags='--headless --no-sandbox' --output=html --output-path=./lighthouse-report.html",
+        "test-performance": "npm run performance && echo 'Performance optimization complete. Test with: npm run lighthouse'"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.2",
