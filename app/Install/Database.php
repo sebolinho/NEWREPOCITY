@@ -86,12 +86,13 @@ class Database
             $this->setupDatabaseConnectionConfig($tempData);
             DB::connection('mysql')->reconnect();
             
-            // Check if database exists
-            $databases = DB::connection('mysql')->select('SHOW DATABASES LIKE ?', [$data->name]);
+            // Check if database exists using information_schema (safer and supports parameter binding)
+            $databases = DB::connection('mysql')->select('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = ?', [$data->name]);
             
             if (empty($databases)) {
-                // Create database
-                DB::connection('mysql')->statement('CREATE DATABASE IF NOT EXISTS `' . $data->name . '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
+                // Create database (database name is pre-validated to contain only safe characters)
+                $safeDatabaseName = preg_replace('/[^a-zA-Z0-9_]/', '', $data->name); // Extra safety
+                DB::connection('mysql')->statement("CREATE DATABASE IF NOT EXISTS `{$safeDatabaseName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
                 
                 return [
                     'success' => true,
@@ -321,12 +322,12 @@ class Database
             
             $command = sprintf(
                 'mysqldump -h %s -P %s -u %s -p%s %s > %s',
-                config('database.connections.mysql.host'),
-                config('database.connections.mysql.port'),
-                config('database.connections.mysql.username'),
-                config('database.connections.mysql.password'),
-                $databaseName,
-                $filepath
+                escapeshellarg(config('database.connections.mysql.host')),
+                escapeshellarg(config('database.connections.mysql.port')),
+                escapeshellarg(config('database.connections.mysql.username')),
+                escapeshellarg(config('database.connections.mysql.password')),
+                escapeshellarg($databaseName),
+                escapeshellarg($filepath)
             );
             
             $result = $this->executeCommand($command);
