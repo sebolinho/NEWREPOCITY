@@ -80,8 +80,8 @@ export default defineConfig({
         // Performance settings for faster builds and smaller bundles
         chunkSizeWarningLimit: 1000,
         sourcemap: false,
-        // Advanced CSS optimizations with lightningcss
-        cssMinify: 'lightningcss',
+        // Standard CSS minification (compatible without extra dependencies)
+        cssMinify: true,
         reportCompressedSize: false, // Faster builds
         // Asset inlining threshold for small assets
         assetsInlineLimit: 4096,

@@ -67,12 +67,17 @@ class Requirement
 
     public function satisfied()
     {
-        return collect($this->extensions())
-            ->merge($this->directories())
-            ->merge($this->systemRequirements())
-            ->every(function ($item) {
-                return $item;
-            });
+        // Core requirements that must pass
+        $coreRequirements = collect($this->extensions())
+            ->merge($this->directories());
+            
+        // System requirements are optional for installation
+        $systemReqs = collect($this->systemRequirements());
+        
+        // Only require core extensions and directory permissions
+        return $coreRequirements->every(function ($item) {
+            return $item;
+        });
     }
 
     public function allChecksPassed()
@@ -120,27 +125,68 @@ class Requirement
 
     private function checkComposer()
     {
-        return \shell_exec('composer --version') !== null;
+        return $this->executeCommand('composer --version');
     }
 
     private function checkNodejs()
     {
-        return \shell_exec('node --version') !== null;
+        return $this->executeCommand('node --version');
     }
 
     private function checkNpm()
     {
-        return \shell_exec('npm --version') !== null;
+        return $this->executeCommand('npm --version');
     }
 
     private function checkFFMpeg()
     {
-        return \shell_exec('ffmpeg -version') !== null;
+        return $this->executeCommand('ffmpeg -version');
     }
 
     private function checkImageMagick()
     {
-        return \shell_exec('convert -version') !== null;
+        return $this->executeCommand('convert -version');
+    }
+
+    /**
+     * Safely execute command with fallback methods
+     */
+    private function executeCommand($command)
+    {
+        // Check if exec functions are available
+        $disabledFunctions = explode(',', ini_get('disable_functions'));
+        $disabledFunctions = array_map('trim', $disabledFunctions);
+        
+        // Try shell_exec first
+        if (!in_array('shell_exec', $disabledFunctions) && function_exists('shell_exec')) {
+            $output = @shell_exec($command . ' 2>/dev/null');
+            if ($output !== null && $output !== '') {
+                return true;
+            }
+        }
+        
+        // Try exec as fallback
+        if (!in_array('exec', $disabledFunctions) && function_exists('exec')) {
+            $output = [];
+            $returnVar = 0;
+            @exec($command . ' 2>/dev/null', $output, $returnVar);
+            if ($returnVar === 0 && !empty($output)) {
+                return true;
+            }
+        }
+        
+        // Try system as another fallback
+        if (!in_array('system', $disabledFunctions) && function_exists('system')) {
+            ob_start();
+            $returnVar = @system($command . ' 2>/dev/null');
+            $output = ob_get_clean();
+            if ($returnVar !== false && $output !== '') {
+                return true;
+            }
+        }
+        
+        // If all methods fail, return false but don't break installation
+        return false;
     }
 
     private function convertToBytes($value)

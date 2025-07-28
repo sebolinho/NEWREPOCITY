@@ -192,7 +192,7 @@
     "src": "resources/img/texture.webp"
   },
   "resources/js/app.js": {
-    "file": "assets/js/app-BNnoXpBp.js",
+    "file": "assets/js/app-LJIi9u0E.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -200,11 +200,11 @@
       "_tippy-D5uH3rDF.js"
     ],
     "css": [
-      "assets/css/app-v68JFbmK.css"
+      "assets/css/app-Cg4GiC7M.css"
     ]
   },
   "resources/scss/app.scss": {
-    "file": "assets/css/app-DU_WTUoa.css",
+    "file": "assets/css/app-ciE3el-t.css",
     "src": "resources/scss/app.scss",
     "isEntry": true,
     "names": [

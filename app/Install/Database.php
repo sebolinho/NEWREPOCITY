@@ -328,9 +328,9 @@ class Database
                 $filepath
             );
             
-            \exec($command, $output, $returnCode);
+            $result = $this->executeCommand($command);
             
-            if ($returnCode === 0 && file_exists($filepath)) {
+            if ($result && file_exists($filepath)) {
                 return [
                     'success' => true,
                     'message' => 'Database backup created successfully',
@@ -340,7 +340,7 @@ class Database
             
             return [
                 'success' => false,
-                'message' => 'Database backup failed'
+                'message' => 'Database backup failed - mysqldump not available or insufficient permissions'
             ];
         } catch (\Exception $e) {
             return [
@@ -348,5 +348,40 @@ class Database
                 'message' => 'Database backup failed: ' . $e->getMessage()
             ];
         }
+    }
+
+    /**
+     * Safely execute command with fallback methods
+     */
+    private function executeCommand($command)
+    {
+        // Check if exec functions are available
+        $disabledFunctions = explode(',', ini_get('disable_functions'));
+        $disabledFunctions = array_map('trim', $disabledFunctions);
+        
+        // Try exec first (best for commands with output)
+        if (!in_array('exec', $disabledFunctions) && function_exists('exec')) {
+            $output = [];
+            $returnVar = 0;
+            @exec($command . ' 2>/dev/null', $output, $returnVar);
+            return $returnVar === 0;
+        }
+        
+        // Try shell_exec as fallback
+        if (!in_array('shell_exec', $disabledFunctions) && function_exists('shell_exec')) {
+            $output = @shell_exec($command . ' 2>/dev/null');
+            return $output !== null;
+        }
+        
+        // Try system as another fallback
+        if (!in_array('system', $disabledFunctions) && function_exists('system')) {
+            ob_start();
+            $returnVar = @system($command . ' 2>/dev/null');
+            ob_get_clean();
+            return $returnVar !== false;
+        }
+        
+        // If all methods fail, return false but don't break installation
+        return false;
     }
 }
