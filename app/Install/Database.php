@@ -108,7 +108,8 @@ class Database
         } catch (\Exception $e) {
             return [
                 'success' => false,
-                'message' => 'Failed to create database: ' . $e->getMessage()
+                'message' => 'Failed to create database: ' . $e->getMessage(),
+                'created' => false
             ];
         }
     }

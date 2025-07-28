@@ -70,7 +70,11 @@ class InstallController extends Controller
             $installationSteps[] = ['step' => 'Setting up database...', 'status' => 'running'];
             
             $dbCreation = $database->createDatabaseIfNotExists($request);
-            if ($dbCreation['created']) {
+            if (!$dbCreation['success']) {
+                return back()->withInput()->with('error', $dbCreation['message']);
+            }
+            
+            if (isset($dbCreation['created']) && $dbCreation['created']) {
                 $installationSteps[] = ['step' => 'Database created successfully', 'status' => 'completed'];
             } else {
                 $installationSteps[] = ['step' => 'Using existing database', 'status' => 'completed'];
