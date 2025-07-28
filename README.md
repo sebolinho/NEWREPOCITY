@@ -539,15 +539,55 @@ DEBUG=vite:* npm run build
 ```
 
 #### 4. CSS/JS não carregam (404 errors)
-```bash
-# Verificar se build foi executado
-ls -la public/build/
 
-# Executar build se necessário
+**🚨 PROBLEMA MAIS COMUM: Build não foi executado ou assets estão desatualizados**
+
+```bash
+# Script automático para resolver 404s de assets
+./rebuild-assets.sh
+```
+
+**Ou passo a passo manual:**
+
+```bash
+# 1. Limpar build antigo completamente
+rm -rf public/build/*
+
+# 2. Limpar caches Laravel
+php artisan config:clear
+php artisan route:clear  
+php artisan view:clear
+
+# 3. Reinstalar dependências se necessário
+npm install
+
+# 4. Rebuild completo
 npm run build
 
-# Verificar se assets estão sendo gerados
-npm run build && ls -la public/build/assets/
+# 5. Verificar se assets foram gerados
+ls -la public/build/assets/css/
+ls -la public/build/assets/js/
+
+# 6. Verificar manifest
+cat public/build/manifest.json | grep -E "(app-.*\.(css|js)|tippy.*\.js)"
+```
+
+**Após build, SEMPRE:**
+- **Hard refresh** no navegador: `Ctrl+F5` (Windows) ou `Cmd+Shift+R` (Mac)
+- Limpar cache do navegador completamente
+- Se usando nginx/apache, reiniciar o servidor web
+
+**Verificar URLs geradas:**
+```bash
+# Testar URLs que Laravel gera
+php artisan tinker --execute="echo app(\Illuminate\Foundation\Vite::class)(['resources/scss/app.scss', 'resources/js/app.js']);"
+```
+
+**Configuração de domínio:**
+```bash
+# No .env, configure o domínio correto:
+APP_URL=https://seudominio.com  # NÃO http://localhost
+```
 ```
 
 ## 📊 Métricas de Performance Alvo

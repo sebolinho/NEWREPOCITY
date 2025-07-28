@@ -10,6 +10,8 @@ export default defineConfig({
                 'resources/js/app.js',
             ],
             refresh: true,
+            // Ensure proper build directory structure
+            buildDirectory: 'build',
         }),
         viteStaticCopy({
             targets: [
@@ -20,6 +22,8 @@ export default defineConfig({
             ]
         })
     ],
+    // Ensure proper base configuration for production
+    base: process.env.NODE_ENV === 'production' ? '/build/' : '/',
     build: {
         // Enhanced optimization for maximum PageSpeed performance
         minify: 'terser',
