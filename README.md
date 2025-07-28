@@ -2,9 +2,12 @@
 
 Uma plataforma moderna de streaming de filmes e séries desenvolvida com Laravel, otimizada para performance máxima e SEO.
 
+> **🚨 IMPORTANTE**: Após qualquer instalação, você DEVE executar `npm run build` para gerar os assets otimizados!
+
 ## 📋 Índice
 
 - [Características](#características)
+- [🚀 Build Instructions - IMPORTANTE](#-build-instructions---importante)
 - [Instalação Automatizada](#instalação-automatizada)
 - [Requisitos do Sistema](#requisitos-do-sistema)
 - [Configuração Manual (Avançada)](#configuração-manual-avançada)
@@ -26,6 +29,94 @@ Uma plataforma moderna de streaming de filmes e séries desenvolvida com Laravel
 - **Mobile**: Responsivo e PWA ready
 - **Instalação**: **100% Automatizada** com otimizações incluídas
 
+## 🚀 Build Instructions - IMPORTANTE
+
+> **⚠️ ATENÇÃO**: Você DEVE executar o build do Vite após qualquer instalação ou modificação dos assets!
+
+### 📦 Comandos de Build
+
+#### Para Produção (OBRIGATÓRIO após instalação):
+```bash
+# Instalar dependências e fazer build de produção
+npm install
+npm run build
+```
+
+#### Para Desenvolvimento:
+```bash
+# Modo desenvolvimento com hot-reload
+npm run dev
+```
+
+### 🔧 Quando Executar o Build
+
+**SEMPRE execute `npm run build` quando:**
+- ✅ Após clonar o repositório
+- ✅ Após usar a instalação automatizada `/install/index`
+- ✅ Após modificar arquivos CSS/JS/SCSS
+- ✅ Antes de colocar em produção
+- ✅ Após atualizar dependências NPM
+
+### 📁 O que o Build Gera
+
+O comando `npm run build` cria os arquivos otimizados em:
+```
+public/build/
+├── assets/
+│   ├── css/
+│   │   └── app-[hash].css     # CSS minificado
+│   └── js/
+│       ├── app-[hash].js      # JavaScript principal
+│       ├── tippy-[hash].js    # Tippy.js chunk
+│       ├── swiper-[hash].js   # Swiper chunk
+│       └── alpine-[hash].js   # Alpine.js chunk
+└── manifest.json              # Manifest dos assets
+```
+
+### ⚡ Otimizações Incluídas no Build
+
+- **CSS**: Minificação com TailwindCSS otimizado
+- **JavaScript**: Terser com compressão avançada
+- **Code Splitting**: Chunks otimizados para cache
+- **Tree Shaking**: Remoção de código não utilizado
+- **Assets**: Inlining de assets pequenos (<4KB)
+- **Sourcemaps**: Desabilitados para menor tamanho
+
+### 🐛 Problemas Comuns de Build
+
+#### Build falha - "require() of ES Module"
+```bash
+# Limpar cache e reinstalar
+rm -rf node_modules package-lock.json
+npm install
+npm run build
+```
+
+#### Assets não carregam (404 errors)
+```bash
+# Verificar se o build foi executado
+ls -la public/build/
+npm run build
+```
+
+#### Build muito lento
+```bash
+# Build sem relatórios (mais rápido)
+NODE_ENV=production npm run build
+```
+
+### 📊 Métricas do Build
+
+Build típico bem-sucedido:
+```
+✓ built in ~6-8 segundos
+dist/assets/app-[hash].css        37.09 kB │ gzip: 8.45 kB
+dist/assets/app-[hash].js         147.17 kB │ gzip: 52.33 kB
+dist/assets/tippy-[hash].js       34.31 kB │ gzip: 12.85 kB
+dist/assets/swiper-[hash].js      89.42 kB │ gzip: 28.15 kB
+dist/assets/alpine-[hash].js      45.68 kB │ gzip: 16.22 kB
+```
+
 ## 🎯 Instalação Automatizada
 
 ### ⚡ Instalação Rápida (Recomendada)
@@ -41,7 +132,13 @@ cd NEWREPOCITY
 http://seudominio.com/install/index
 ```
 
-**3. Siga o assistente visual:**
+**3. IMPORTANTE - Execute o build após a instalação:**
+```bash
+npm install
+npm run build
+```
+
+**4. Siga o assistente visual:**
 - ✅ **Verificação automática** de requisitos do sistema
 - ✅ **Detecção automática** de configuração do banco
 - ✅ **Instalação completa** em poucos cliques
@@ -56,7 +153,7 @@ http://seudominio.com/install/index
 - Otimizações de performance
 
 #### ⚡ Performance
-- Build automático de assets (Vite 7.x)
+- Build de assets (Vite 7.x) - **VOCÊ DEVE EXECUTAR:** `npm run build`
 - Configuração de cache Laravel
 - Compressão e minificação automática
 - Storage links configurados
@@ -130,16 +227,21 @@ cd NEWREPOCITY
 ### 2. Instale Dependências
 ```bash
 composer install --optimize-autoloader --no-dev
-npm ci && npm run build
+npm install
 ```
 
-### 3. Configure Ambiente
+### 3. Execute Build de Produção
+```bash
+npm run build
+```
+
+### 4. Configure Ambiente
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-### 4. Configure Banco no .env
+### 5. Configure Banco no .env
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -149,12 +251,12 @@ DB_USERNAME=seu_usuario
 DB_PASSWORD=sua_senha
 ```
 
-### 5. Execute Migrations
+### 6. Execute Migrations
 ```bash
 php artisan migrate --seed
 ```
 
-### 6. Otimize Sistema
+### 7. Otimize Sistema
 ```bash
 ./optimize.sh  # Script de otimização completa
 ```
@@ -263,7 +365,7 @@ sudo certbot --nginx -d seudominio.com -d www.seudominio.com
 ```
 - Composer otimizado com autoloader
 - Cache Laravel (config, routes, views)
-- Build de assets Vite otimizado
+- ⚠️ **Não inclui build Vite** - você deve executar: `npm run build`
 - Compressão de imagens
 - Limpeza de logs antigos
 
@@ -422,6 +524,30 @@ npm run build  # Para produção
 
 # Verificar logs de build
 npm run build --verbose
+
+# Limpar cache NPM e reinstalar
+rm -rf node_modules package-lock.json
+npm install
+npm run build
+
+# Verificar se Node.js está atualizado
+node --version  # Deve ser >= 18.x
+npm --version
+
+# Build com debug
+DEBUG=vite:* npm run build
+```
+
+#### 4. CSS/JS não carregam (404 errors)
+```bash
+# Verificar se build foi executado
+ls -la public/build/
+
+# Executar build se necessário
+npm run build
+
+# Verificar se assets estão sendo gerados
+npm run build && ls -la public/build/assets/
 ```
 
 ## 📊 Métricas de Performance Alvo
