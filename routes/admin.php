@@ -136,6 +136,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','auth.admin'])->group
         Route::post('user/{id}', 'update')->name('update')->middleware('demo');
     });
 
+    // Content Manager - Enhanced content management system
+    Route::controller(\App\Http\Controllers\Admin\ContentManagerController::class)->name('content-manager.')->group(function () {
+        Route::get('content-manager', 'index')->name('index');
+        Route::get('content-manager/quick-add', 'quickAdd')->name('quick-add');
+        Route::post('content-manager/quick-add', 'storeQuickAdd')->name('store-quick-add')->middleware('demo');
+        Route::get('content-manager/bulk-actions', 'bulkActions')->name('bulk-actions');
+        Route::post('content-manager/bulk-actions', 'processBulkAction')->name('process-bulk-action')->middleware('demo');
+        Route::get('content-manager/audit', 'contentAudit')->name('audit');
+        Route::post('content-manager/fix-issue', 'fixContentIssue')->name('fix-issue')->middleware('demo');
+        Route::get('content-manager/search', 'searchContent')->name('search');
+    });
+
     // Language
     Route::controller(\App\Http\Controllers\Admin\LanguageController::class)->name('language.')->group(function () {
         Route::get('languages', 'index')->name('index');

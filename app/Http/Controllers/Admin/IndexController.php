@@ -167,6 +167,22 @@ class IndexController extends Controller
         $data['tv'] = Post::where('type','tv')->count();
         $data['episode'] = PostEpisode::count();
         $data['people'] = People::count();
+        
+        // Enhanced statistics for better admin insights
+        $data['published_content'] = Post::where('status', 'publish')->count();
+        $data['draft_content'] = Post::where('status', 'draft')->count();
+        $data['featured_content'] = Post::where('featured', 'active')->count();
+        $data['recent_content'] = Post::where('created_at', '>=', Carbon::now()->subDays(7))->count();
+        $data['content_this_month'] = Post::whereMonth('created_at', Carbon::now()->month)->count();
+        $data['pending_comments'] = Comment::where('status', 'draft')->count();
+        $data['pending_reports'] = Report::where('status', 'pending')->count();
+        
+        // Content quality metrics
+        $data['content_without_images'] = Post::whereNull('image')->orWhere('image', '')->count();
+        $data['content_without_descriptions'] = Post::where(function($query) {
+            $query->whereNull('overview')->orWhere('overview', '');
+        })->count();
+        
         $reports = Report::where('status','pending')->limit(8)->orderBy('id','desc')->get();
         $comments = Comment::where('status','draft')->limit(8)->orderBy('id','desc')->get();
 

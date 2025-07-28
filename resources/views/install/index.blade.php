@@ -8,7 +8,7 @@
         </div>
         <div class="mb-6">
             <h3 class="text-3xl mb-2 font-bold text-white">Instalação Automatizada NEWREPOCITY</h3>
-            <p class="text-lg text-gray-400">Sistema de instalação completo com otimizações automáticas de performance e SEO.</p>
+            <p class="text-lg text-gray-400">Sistema de instalação completo com otimizações automáticas de performance.</p>
         </div>
 
         <!-- System Status Card -->
@@ -148,7 +148,7 @@
                     Continuar Instalação Automatizada
                 </a>
                 <p class="text-sm text-gray-400 mt-3">
-                    A instalação será completamente automatizada com otimizações de performance e SEO
+                    A instalação será completamente automatizada com otimizações de performance
                 </p>
             @else
                 <div class="inline-flex items-center px-8 py-4 bg-gray-600 text-gray-300 font-bold text-lg rounded-lg cursor-not-allowed">

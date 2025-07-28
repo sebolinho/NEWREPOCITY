@@ -208,6 +208,25 @@ return [
                 ]
             ],
         ],
+        'admin.content-manager.index' => [
+            'icon' => 'settings',
+            'nav' => 'content-manager',
+            'title' => 'Content Manager',
+            'menu' => [
+                'admin.content-manager.index' => [
+                    'title' => 'Dashboard',
+                ],
+                'admin.content-manager.quick-add' => [
+                    'title' => 'Quick Add',
+                ],
+                'admin.content-manager.bulk-actions' => [
+                    'title' => 'Bulk Actions',
+                ],
+                'admin.content-manager.audit' => [
+                    'title' => 'Content Audit',
+                ],
+            ],
+        ],
         'admin.broadcast.index' => [
             'icon' => 'broadcast',
             'nav' => 'broadcast',
