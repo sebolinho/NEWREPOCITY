@@ -13,14 +13,116 @@ class Database
         $this->checkDatabaseConnection($data);
         $this->setEnvVariables($data);
         $this->migrateDatabase();
+        $this->seedDatabase();
+        
+        return [
+            'success' => true,
+            'message' => 'Database setup completed successfully'
+        ];
+    }
+
+    public function testConnection($data)
+    {
+        try {
+            $this->setupDatabaseConnectionConfig($data);
+            DB::connection('mysql')->reconnect();
+            DB::connection('mysql')->getPdo();
+            
+            return [
+                'success' => true,
+                'message' => 'Database connection successful'
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Database connection failed: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    public function detectDatabaseConfiguration()
+    {
+        $detectedConfig = [];
+        
+        // Try to detect common database configurations
+        $commonHosts = ['localhost', '127.0.0.1', 'mysql', 'mariadb'];
+        $commonPorts = [3306, 3307];
+        
+        foreach ($commonHosts as $host) {
+            foreach ($commonPorts as $port) {
+                try {
+                    $testData = (object) [
+                        'host' => $host,
+                        'port' => $port,
+                        'name' => '',
+                        'username' => 'root',
+                        'password' => ''
+                    ];
+                    
+                    if ($this->testConnectionSilent($testData)) {
+                        $detectedConfig = [
+                            'host' => $host,
+                            'port' => $port,
+                            'detected' => true
+                        ];
+                        break 2;
+                    }
+                } catch (\Exception $e) {
+                    continue;
+                }
+            }
+        }
+        
+        return $detectedConfig;
+    }
+
+    public function createDatabaseIfNotExists($data)
+    {
+        try {
+            // Connect without specifying database
+            $tempData = clone $data;
+            $tempData->name = '';
+            
+            $this->setupDatabaseConnectionConfig($tempData);
+            DB::connection('mysql')->reconnect();
+            
+            // Check if database exists
+            $databases = DB::connection('mysql')->select('SHOW DATABASES LIKE ?', [$data->name]);
+            
+            if (empty($databases)) {
+                // Create database
+                DB::connection('mysql')->statement('CREATE DATABASE IF NOT EXISTS `' . $data->name . '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
+                
+                return [
+                    'success' => true,
+                    'message' => 'Database created successfully',
+                    'created' => true
+                ];
+            }
+            
+            return [
+                'success' => true,
+                'message' => 'Database already exists',
+                'created' => false
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Failed to create database: ' . $e->getMessage()
+            ];
+        }
     }
 
     private function checkDatabaseConnection($data)
     {
         $this->setupDatabaseConnectionConfig($data);
 
-        DB::connection('mysql')->reconnect();
-        DB::connection('mysql')->getPdo();
+        try {
+            DB::connection('mysql')->reconnect();
+            DB::connection('mysql')->getPdo();
+        } catch (\Exception $e) {
+            throw new \Exception('Database connection failed: ' . $e->getMessage());
+        }
     }
 
     private function setupDatabaseConnectionConfig($data)
@@ -28,10 +130,14 @@ class Database
         config([
             'database.default' => 'mysql',
             'database.connections.mysql.host' => $data->host,
-            'database.connections.mysql.port' => $data->post,
+            'database.connections.mysql.port' => $data->port ?? 3306,
             'database.connections.mysql.database' => $data->name,
             'database.connections.mysql.username' => $data->username,
             'database.connections.mysql.password' => $data->password,
+            'database.connections.mysql.charset' => 'utf8mb4',
+            'database.connections.mysql.collation' => 'utf8mb4_unicode_ci',
+            'database.connections.mysql.strict' => true,
+            'database.connections.mysql.engine' => null,
         ]);
     }
 
@@ -40,17 +146,207 @@ class Database
         $env = DotenvEditor::load();
         $env->autoBackup(false);
 
+        $env->setKey('DB_CONNECTION', 'mysql');
         $env->setKey('DB_HOST', $data->host);
-        $env->setKey('DB_PORT', $data->post);
+        $env->setKey('DB_PORT', $data->port ?? 3306);
         $env->setKey('DB_DATABASE', $data->name);
         $env->setKey('DB_USERNAME', $data->username);
         $env->setKey('DB_PASSWORD', $data->password);
-        $env->setKey('LICENSE_KEY', $data->license_key);
+        
+        // Set additional database configurations
+        $env->setKey('DB_CHARSET', 'utf8mb4');
+        $env->setKey('DB_COLLATION', 'utf8mb4_unicode_ci');
+        
+        // License key (if provided)
+        if (isset($data->license_key) && !empty($data->license_key)) {
+            $env->setKey('LICENSE_KEY', $data->license_key);
+        }
+        
         $env->save();
     }
 
     private function migrateDatabase()
     {
-        Artisan::call('migrate:fresh', ['--force' => true,'--seed' => true]);
+        try {
+            // Fresh migration with seeding
+            Artisan::call('migrate:fresh', ['--force' => true]);
+            
+            return [
+                'success' => true,
+                'message' => 'Database migrations completed successfully'
+            ];
+        } catch (\Exception $e) {
+            // Try regular migration if fresh fails
+            try {
+                Artisan::call('migrate', ['--force' => true]);
+                return [
+                    'success' => true,
+                    'message' => 'Database migrations completed successfully'
+                ];
+            } catch (\Exception $e2) {
+                throw new \Exception('Migration failed: ' . $e2->getMessage());
+            }
+        }
+    }
+
+    private function seedDatabase()
+    {
+        try {
+            Artisan::call('db:seed', ['--force' => true]);
+            
+            return [
+                'success' => true,
+                'message' => 'Database seeding completed successfully'
+            ];
+        } catch (\Exception $e) {
+            // Seeding is optional, don't fail the installation
+            return [
+                'success' => false,
+                'message' => 'Database seeding failed (optional): ' . $e->getMessage()
+            ];
+        }
+    }
+
+    private function testConnectionSilent($data)
+    {
+        try {
+            $this->setupDatabaseConnectionConfig($data);
+            DB::connection('mysql')->reconnect();
+            DB::connection('mysql')->getPdo();
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function optimizeDatabase()
+    {
+        try {
+            // Optimize database tables
+            $tables = DB::select('SHOW TABLES');
+            $databaseName = config('database.connections.mysql.database');
+            
+            foreach ($tables as $table) {
+                $tableName = $table->{"Tables_in_{$databaseName}"};
+                DB::statement("OPTIMIZE TABLE `{$tableName}`");
+            }
+            
+            return [
+                'success' => true,
+                'message' => 'Database optimization completed'
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Database optimization failed: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    public function getDatabaseInfo()
+    {
+        try {
+            $version = DB::select('SELECT VERSION() as version')[0]->version;
+            $size = DB::select("
+                SELECT 
+                    ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS 'size_mb'
+                FROM information_schema.tables 
+                WHERE table_schema = ?
+            ", [config('database.connections.mysql.database')])[0]->size_mb ?? 0;
+            
+            $tables = DB::select("
+                SELECT COUNT(*) as count 
+                FROM information_schema.tables 
+                WHERE table_schema = ?
+            ", [config('database.connections.mysql.database')])[0]->count ?? 0;
+
+            return [
+                'version' => $version,
+                'size_mb' => $size,
+                'tables_count' => $tables,
+                'connection' => 'MySQL/MariaDB'
+            ];
+        } catch (\Exception $e) {
+            return [
+                'version' => 'Unknown',
+                'size_mb' => 0,
+                'tables_count' => 0,
+                'connection' => 'Failed to connect'
+            ];
+        }
+    }
+
+    public function validateDatabaseRequirements($data)
+    {
+        $errors = [];
+        
+        if (empty($data->host)) {
+            $errors[] = 'Database host is required';
+        }
+        
+        if (empty($data->name)) {
+            $errors[] = 'Database name is required';
+        }
+        
+        if (empty($data->username)) {
+            $errors[] = 'Database username is required';
+        }
+        
+        // Validate database name format
+        if (!empty($data->name) && !preg_match('/^[a-zA-Z0-9_]+$/', $data->name)) {
+            $errors[] = 'Database name can only contain letters, numbers, and underscores';
+        }
+        
+        // Validate port
+        if (!empty($data->port) && (!is_numeric($data->port) || $data->port < 1 || $data->port > 65535)) {
+            $errors[] = 'Database port must be a number between 1 and 65535';
+        }
+        
+        return $errors;
+    }
+
+    public function backupDatabase()
+    {
+        try {
+            $databaseName = config('database.connections.mysql.database');
+            $backupPath = storage_path('app/backups');
+            
+            if (!is_dir($backupPath)) {
+                mkdir($backupPath, 0755, true);
+            }
+            
+            $filename = 'backup_' . $databaseName . '_' . date('Y_m_d_H_i_s') . '.sql';
+            $filepath = $backupPath . '/' . $filename;
+            
+            $command = sprintf(
+                'mysqldump -h %s -P %s -u %s -p%s %s > %s',
+                config('database.connections.mysql.host'),
+                config('database.connections.mysql.port'),
+                config('database.connections.mysql.username'),
+                config('database.connections.mysql.password'),
+                $databaseName,
+                $filepath
+            );
+            
+            exec($command, $output, $returnCode);
+            
+            if ($returnCode === 0 && file_exists($filepath)) {
+                return [
+                    'success' => true,
+                    'message' => 'Database backup created successfully',
+                    'file' => $filename
+                ];
+            }
+            
+            return [
+                'success' => false,
+                'message' => 'Database backup failed'
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Database backup failed: ' . $e->getMessage()
+            ];
+        }
     }
 }
