@@ -42,8 +42,9 @@ class PerformanceOptimization
      */
     private function shouldOptimize($response): bool
     {
-        return $response->headers->get('Content-Type', '') === 'text/html; charset=UTF-8' ||
-               str_contains($response->headers->get('Content-Type', ''), 'text/html');
+        $contentType = $response->headers->get('Content-Type', '');
+        return $contentType === 'text/html; charset=UTF-8' ||
+               strpos($contentType, 'text/html') !== false;
     }
 
     /**
@@ -76,12 +77,35 @@ class PerformanceOptimization
             '<link rel="dns-prefetch" href="//ajax.googleapis.com">',
         ];
 
-        // Add critical resource preloads
-        $preloads = [
-            '<link rel="preload" href="' . mix('css/app.css') . '" as="style" onload="this.onload=null;this.rel=\'stylesheet\'">',
-            '<link rel="preload" href="' . mix('js/app.js') . '" as="script">',
-            '<link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>',
-        ];
+        // Add critical resource preloads using Vite
+        $preloads = [];
+        
+        // Try to get Vite manifest for asset URLs
+        try {
+            $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
+            if ($manifest) {
+                // Get CSS asset from manifest
+                foreach ($manifest as $key => $asset) {
+                    if (substr($key, -5) === '.scss' || substr($key, -4) === '.css') {
+                        $preloads[] = '<link rel="preload" href="/build/' . $asset['file'] . '" as="style" onload="this.onload=null;this.rel=\'stylesheet\'">';
+                        break;
+                    }
+                }
+                // Get JS asset from manifest  
+                foreach ($manifest as $key => $asset) {
+                    if (substr($key, -3) === '.js' && isset($asset['isEntry']) && $asset['isEntry']) {
+                        $preloads[] = '<link rel="preload" href="/build/' . $asset['file'] . '" as="script">';
+                        break;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Fallback to basic preload without specific asset URLs
+            \Log::info('Vite manifest not found, skipping asset preloads: ' . $e->getMessage());
+        }
+        
+        // Add font preload regardless
+        $preloads[] = '<link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>';
 
         $allHints = array_merge($hints, $preloads);
         $hintsHtml = implode("\n    ", $allHints);

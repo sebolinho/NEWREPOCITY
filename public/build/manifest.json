@@ -3,8 +3,8 @@
     "file": "assets/swiper-l0sNRNKZ.js",
     "name": "swiper"
   },
-  "_vendor-C-1G2k3o.js": {
-    "file": "assets/vendor-C-1G2k3o.js",
+  "_vendor-C5DcNM9U.js": {
+    "file": "assets/vendor-C5DcNM9U.js",
     "name": "vendor"
   },
   "node_modules/tippy.js/dist/tippy.esm.js": {
@@ -185,48 +185,29 @@
     "file": "assets/jquery.minicolors-DuhFDKu9.png",
     "src": "resources/img/jquery.minicolors.png"
   },
-  "resources/img/payment/bank.svg": {
-    "file": "assets/bank-D87XWRiC.svg",
-    "src": "resources/img/payment/bank.svg"
-  },
-  "resources/img/payment/coinbase.svg": {
-    "file": "assets/coinbase-jxMbp7Fw.svg",
-    "src": "resources/img/payment/coinbase.svg"
-  },
   "resources/img/payment/paypal.svg": {
     "file": "assets/paypal-DhbRUPni.svg",
     "src": "resources/img/payment/paypal.svg"
-  },
-  "resources/img/payment/stripe.svg": {
-    "file": "assets/stripe-qyb1alG1.svg",
-    "src": "resources/img/payment/stripe.svg"
-  },
-  "resources/img/shape.svg": {
-    "file": "assets/shape-Cii07m5Y.svg",
-    "src": "resources/img/shape.svg"
   },
   "resources/img/texture.webp": {
     "file": "assets/texture-_wx1kN7-.webp",
     "src": "resources/img/texture.webp"
   },
   "resources/js/app.js": {
-    "file": "assets/app-Cf6PEtEQ.js",
+    "file": "assets/app-NCPr3YCf.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vendor-C-1G2k3o.js"
+      "_vendor-C5DcNM9U.js"
     ],
     "dynamicImports": [
       "node_modules/tippy.js/dist/tippy.esm.js"
     ]
   },
   "resources/scss/app.scss": {
-    "file": "assets/app-DlRAuvCP.css",
+    "file": "assets/app-roNUITiV.css",
     "src": "resources/scss/app.scss",
-    "isEntry": true,
-    "names": [
-      "app.css"
-    ]
+    "isEntry": true
   }
 }
