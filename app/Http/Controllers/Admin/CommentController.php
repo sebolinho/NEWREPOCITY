@@ -46,17 +46,56 @@ class CommentController extends Controller
 
     public function update(Request $request, $id)
     {
-        $model = Comment::findOrFail($id);
-        $model->body              = $request->input('body');
-        $model->status              = $request->input('status','draft');
-        $model->save();
+        try {
+            $request->validate([
+                'body' => 'required|string|min:5|max:500',
+                'status' => 'required|in:publish,draft'
+            ]);
 
-        return redirect()->route('admin.comment.edit',$model->id)->with('success', __(':title updated', ['title' => __('Comment')]));
+            $model = Comment::findOrFail($id);
+            $model->body = $request->input('body');
+            $model->status = $request->input('status', 'draft');
+            $model->save();
+
+            return redirect()->route('admin.comment.edit', $model->id)->with('success', __(':title updated', ['title' => __('Comment')]));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::error('Comment not found for update: ' . $e->getMessage(), [
+                'comment_id' => $id,
+                'user_id' => auth()->id()
+            ]);
+            return redirect()->back()->with('error', __('Comment not found.'));
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->withErrors($e->validator->errors())->withInput();
+        } catch (\Exception $e) {
+            \Log::error('Error updating comment in admin: ' . $e->getMessage(), [
+                'comment_id' => $id,
+                'user_id' => auth()->id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->back()->with('error', __('Error updating comment. Please try again.'));
+        }
     }
+
     public function destroy($id)
     {
-        Comment::find($id)->delete();
+        try {
+            $comment = Comment::findOrFail($id);
+            $comment->delete();
 
-        return redirect()->back()->with('success', __('Deleted'));
+            return redirect()->back()->with('success', __('Deleted'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::error('Comment not found for deletion: ' . $e->getMessage(), [
+                'comment_id' => $id,
+                'user_id' => auth()->id()
+            ]);
+            return redirect()->back()->with('error', __('Comment not found.'));
+        } catch (\Exception $e) {
+            \Log::error('Error deleting comment in admin: ' . $e->getMessage(), [
+                'comment_id' => $id,
+                'user_id' => auth()->id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->back()->with('error', __('Error deleting comment. Please try again.'));
+        }
     }
 }

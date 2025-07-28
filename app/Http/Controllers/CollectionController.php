@@ -22,18 +22,38 @@ class CollectionController extends Controller
     }
 
     public function show(Request $request,$slug) {
+        try {
+            $listing = Collection::withCount(['games'])->where('slug', $slug)->firstOrFail();
 
-        $listing = Collection::withCount(['games'])->where('slug', $slug)->firstOrFail() ?? abort(404);
+            // Enhanced SEO optimization
+            $seoMeta = \App\Helpers\SEOHelper::generateCollectionMeta($listing, $request);
 
-        $new = array(
-            $listing->title,
-            $listing->description
-        );
-        $old = array('[title]', '[description]');
+            $new = array(
+                $listing->title,
+                $listing->description
+            );
+            $old = array('[title]', '[description]');
 
-        $config['title'] = trim(str_replace($old, $new, trim(config('settings.collection_title'))));
-        $config['description'] = trim(str_replace($old, $new, trim(config('settings.collection_description'))));
+            $config['title'] = trim(str_replace($old, $new, trim(config('settings.collection_title'))));
+            $config['description'] = trim(str_replace($old, $new, trim(config('settings.collection_description'))));
+            
+            // Merge enhanced SEO
+            $config = array_merge($config, $seoMeta);
 
-        return view('collection.show', compact('config', 'listing'));
+            return view('collection.show', compact('config', 'listing'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            \Log::warning('Collection not found: ' . $slug, [
+                'slug' => $slug,
+                'user_id' => auth()->id()
+            ]);
+            abort(404);
+        } catch (\Exception $e) {
+            \Log::error('Error loading collection: ' . $e->getMessage(), [
+                'slug' => $slug,
+                'user_id' => auth()->id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            abort(500);
+        }
     }
 }

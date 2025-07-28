@@ -1,0 +1,138 @@
+# Laravel
+/vendor/
+/node_modules/
+/public/build/
+/public/hot
+/public/storage
+/storage/*.key
+/storage/app/public/*
+!/storage/app/public/.gitkeep
+/.env
+/.env.backup
+/.env.production
+/.phpunit.result.cache
+/Homestead.json
+/Homestead.yaml
+/auth.json
+/npm-debug.log
+/yarn-error.log
+
+# IDE
+/.idea
+/.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Build artifacts
+/dist/
+/build/
+*.log
+
+# Temporary files
+/tmp/
+*.tmp
+*.temp
+
+# Dependencies
+/vendor/
+/node_modules/
+package-lock.json.bak
+
+# Security and sensitive files
+*.pem
+*.key
+*.crt
+*.p12
+
+# Local configuration
+/.env.local
+/.env.development.local
+/.env.test.local
+/.env.production.local
+
+# Coverage and testing
+/coverage/
+/.nyc_output/
+/phpunit.xml
+/tests/coverage/
+
+# Cache
+/.cache/
+.parcel-cache/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# rollup.js default build output
+dist/
+
+# Uncomment the public uploads folder if it contains user uploaded files
+# /public/uploads/

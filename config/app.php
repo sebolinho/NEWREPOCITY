@@ -169,6 +169,7 @@ return [
         App\Providers\SettingsServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\MarkdownServiceProvider::class,
+        App\Providers\PerformanceServiceProvider::class,
         Berkayk\OneSignal\OneSignalServiceProvider::class,
         \SocialiteProviders\Manager\ServiceProvider::class,
     ])->toArray(),

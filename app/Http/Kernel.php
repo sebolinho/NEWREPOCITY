@@ -23,6 +23,8 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\LanguageMiddleware::class,
+        \App\Http\Middleware\SecurityHeaders::class,
+        \App\Http\Middleware\PerformanceOptimization::class,
     ];
 
     /**
@@ -39,6 +41,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\LanguageMiddleware::class,
+            \App\Http\Middleware\GlobalErrorHandler::class,
         ],
 
         'api' => [

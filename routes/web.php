@@ -124,6 +124,7 @@ Route::controller(App\Http\Controllers\InstallController::class)->name('install.
     Route::get('install/config', 'config')->name('config');
     Route::get('install/complete', 'complete')->name('complete');
     Route::post('install/config', 'store')->name('store');
+    Route::get('install/status', 'checkStatus')->name('status');
 });
 require __DIR__ . '/auth.php';
 require __DIR__ . '/admin.php';

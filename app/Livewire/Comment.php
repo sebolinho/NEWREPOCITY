@@ -65,13 +65,28 @@ class Comment extends Component
      */
     public function editComment(): void
     {
-        $this->authorize('update', $this->comment);
-        $this->validate([
-            'editState.body' => 'required|min:5|max:500'
-        ]);
-        $this->comment->update($this->editState);
-        $this->isEditing = false;
-        $this->showOptions = false;
+        try {
+            $this->authorize('update', $this->comment);
+            $this->validate([
+                'editState.body' => 'required|min:5|max:500'
+            ]);
+            $this->comment->update($this->editState);
+            $this->isEditing = false;
+            $this->showOptions = false;
+            $this->dispatch('show-toast', ['message' => __('Comment updated successfully')])->to(NotifyComponent::class);
+        } catch (AuthorizationException $e) {
+            $this->dispatch('show-toast', ['message' => __('You are not authorized to edit this comment'), 'type' => 'error'])->to(NotifyComponent::class);
+            throw $e;
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            \Log::error('Error updating comment: ' . $e->getMessage(), [
+                'comment_id' => $this->comment->id,
+                'user_id' => auth()->id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            $this->dispatch('show-toast', ['message' => __('Error updating comment. Please try again.'), 'type' => 'error'])->to(NotifyComponent::class);
+        }
     }
 
     /**
@@ -80,10 +95,23 @@ class Comment extends Component
      */
     public function deleteComment(): void
     {
-        $this->authorize('destroy', $this->comment);
-        $this->comment->delete();
-        $this->dispatch('refresh');
-        $this->showOptions = false;
+        try {
+            $this->authorize('destroy', $this->comment);
+            $this->comment->delete();
+            $this->dispatch('refresh');
+            $this->showOptions = false;
+            $this->dispatch('show-toast', ['message' => __('Comment deleted successfully')])->to(NotifyComponent::class);
+        } catch (AuthorizationException $e) {
+            $this->dispatch('show-toast', ['message' => __('You are not authorized to delete this comment'), 'type' => 'error'])->to(NotifyComponent::class);
+            throw $e;
+        } catch (\Exception $e) {
+            \Log::error('Error deleting comment: ' . $e->getMessage(), [
+                'comment_id' => $this->comment->id,
+                'user_id' => auth()->id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            $this->dispatch('show-toast', ['message' => __('Error deleting comment. Please try again.'), 'type' => 'error'])->to(NotifyComponent::class);
+        }
     }
 
     /**
@@ -100,24 +128,36 @@ class Comment extends Component
      */
     public function postReply(): void
     {
-        if (!$this->comment->isParent()) {
-            return;
-        }
-        $this->validate([
-            'replyState.body' => 'required|min:5|max:500'
-        ]);
-        $reply = $this->comment->children()->make($this->replyState);
-        $reply->user()->associate(auth()->user());
-        $reply->commentable()->associate($this->comment->commentable);
-        $reply->status = config('settings.comment_status') == 'active' ? 'draft' : 'publish';
-        $reply->save();
+        try {
+            if (!$this->comment->isParent()) {
+                return;
+            }
+            $this->validate([
+                'replyState.body' => 'required|min:5|max:500'
+            ]);
+            $reply = $this->comment->children()->make($this->replyState);
+            $reply->user()->associate(auth()->user());
+            $reply->commentable()->associate($this->comment->commentable);
+            $reply->status = config('settings.comment_status') == 'active' ? 'draft' : 'publish';
+            $reply->save();
 
-        $this->replyState = [
-            'body' => ''
-        ];
-        $this->isReplying = false;
-        $this->showOptions = false;
-        $this->dispatch('refresh')->self();
+            $this->replyState = [
+                'body' => ''
+            ];
+            $this->isReplying = false;
+            $this->showOptions = false;
+            $this->dispatch('refresh')->self();
+            $this->dispatch('show-toast', ['message' => __('Reply posted successfully')])->to(NotifyComponent::class);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            \Log::error('Error posting reply: ' . $e->getMessage(), [
+                'parent_comment_id' => $this->comment->id,
+                'user_id' => auth()->id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            $this->dispatch('show-toast', ['message' => __('Error posting reply. Please try again.'), 'type' => 'error'])->to(NotifyComponent::class);
+        }
     }
 
     /**

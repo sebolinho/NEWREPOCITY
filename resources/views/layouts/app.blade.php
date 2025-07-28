@@ -5,34 +5,72 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    
+    <!-- Performance Hints -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="//image.tmdb.org">
+    
+    <!-- Title -->
     <title>@if(isset($config['title']))
             {{$config['title']}}
         @else
             {{config('settings.title')}}
         @endif</title>
 
-    <meta itemprop="name"
-          content="@if(isset($config['title'])){{$config['title']}}@else{{config('settings.title')}}@endif">
-    <meta itemprop="description"
-          content="@if(isset($config['description'])){{$config['description']}}@else{{config('settings.description')}}@endif">
-    @if(!empty($config['image']))
-        <meta itemprop="image" content="{{ $config['image'] }}">
+    <!-- Meta Description -->
+    <meta name="description" content="@if(isset($config['description'])){{$config['description']}}@else{{config('settings.description')}}@endif">
+    
+    <!-- Keywords -->
+    @if(isset($config['keywords']))
+        <meta name="keywords" content="{{ $config['keywords'] }}">
     @endif
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="@if(isset($config['canonical'])){{ $config['canonical'] }}@else{{ url()->current() }}@endif"/>
 
-    <meta property="og:title"
-          content="@if(isset($config['title'])){{$config['title']}}@else{{config('settings.title')}}@endif">
-    <meta property="og:description"
-          content="@if(isset($config['description'])){{$config['description']}}@else{{config('settings.description')}}@endif">
-    @if(!empty($config['image']))
-        <meta property="og:image" content="{{ $config['image'] }}"/>
-    @endif
-    <meta property="og:url" content="{{ url()->current() }}">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="@if(isset($config['og_type'])){{ $config['og_type'] }}@else website @endif">
+    <meta property="og:url" content="@if(isset($config['og_url'])){{ $config['og_url'] }}@else{{ url()->current() }}@endif">
+    <meta property="og:title" content="@if(isset($config['og_title'])){{ $config['og_title'] }}@elseif(isset($config['title'])){{$config['title']}}@else{{config('settings.title')}}@endif">
+    <meta property="og:description" content="@if(isset($config['og_description'])){{ $config['og_description'] }}@elseif(isset($config['description'])){{$config['description']}}@else{{config('settings.description')}}@endif">
+    <meta property="og:image" content="@if(isset($config['og_image'])){{ $config['og_image'] }}@elseif(!empty($config['image'])){{ $config['image'] }}@else{{ asset('images/og-default.jpg') }}@endif">
+    <meta property="og:site_name" content="{{ config('settings.site_name', 'Stream Platform') }}">
     <meta property="og:locale" content="{{app()->getLocale().'_'.strtoupper(app()->getLocale())}}"/>
-    <meta property="og:type" content="article"/>
-    <meta name="twitter:card" content="summary_large_image">
 
-    <link rel="canonical" href="{{ url()->current() }}"/>
+    <!-- Twitter -->
+    <meta property="twitter:card" content="@if(isset($config['twitter_card'])){{ $config['twitter_card'] }}@else summary_large_image @endif">
+    <meta property="twitter:url" content="@if(isset($config['twitter_url'])){{ $config['twitter_url'] }}@else{{ url()->current() }}@endif">
+    <meta property="twitter:title" content="@if(isset($config['twitter_title'])){{ $config['twitter_title'] }}@elseif(isset($config['title'])){{$config['title']}}@else{{config('settings.title')}}@endif">
+    <meta property="twitter:description" content="@if(isset($config['twitter_description'])){{ $config['twitter_description'] }}@elseif(isset($config['description'])){{$config['description']}}@else{{config('settings.description')}}@endif">
+    <meta property="twitter:image" content="@if(isset($config['twitter_image'])){{ $config['twitter_image'] }}@elseif(!empty($config['image'])){{ $config['image'] }}@else{{ asset('images/og-default.jpg') }}@endif">
+
+    <!-- Schema.org markup -->
+    @if(isset($config['schema']))
+        <script type="application/ld+json">
+            {!! $config['schema'] !!}
+        </script>
+    @endif
+    
+    <!-- Breadcrumb Schema -->
+    @if(isset($config['breadcrumb_schema']))
+        <script type="application/ld+json">
+            {!! $config['breadcrumb_schema'] !!}
+        </script>
+    @endif
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ asset('site.webmanifest') }}">
 
     @include('partials.head')
     @livewireStyles
