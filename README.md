@@ -25,7 +25,49 @@ A modern, high-performance streaming platform built with Laravel, Livewire, and 
 - Composer
 - Web server (Apache/Nginx)
 
-### Installation
+### 🎯 Recommended Installation (Web Installer)
+
+The **easiest and fastest way** to install your streaming platform:
+
+1. **Download and extract** the platform files to your web server
+2. **Set basic permissions**:
+```bash
+chmod -R 755 storage bootstrap/cache
+chmod 644 .env
+```
+3. **Visit the web installer**: Navigate to `https://your-domain.com/install/index`
+4. **Follow the wizard**: The installer will guide you through:
+   - ✅ Requirements check (PHP extensions, permissions)
+   - ⚙️ Database configuration
+   - 👤 Admin account setup
+   - 📧 Email configuration (optional)
+   - 🚀 Automatic optimization and asset building
+
+**That's it!** The web installer handles everything automatically:
+- Database connection and migrations
+- Admin user creation
+- Storage setup and linking
+- Asset compilation
+- System optimization
+- Security configuration
+
+### 📋 What the Web Installer Does For You
+
+The comprehensive web installer automatically:
+
+- **🔍 Checks all requirements** - PHP extensions, directory permissions, server setup
+- **🗄️ Configures database** - Tests connection, runs migrations, seeds data
+- **👤 Creates admin account** - Sets up your administrator credentials
+- **📧 Sets up email** - Configures SMTP settings for notifications
+- **🔗 Links storage** - Creates symbolic links for file uploads
+- **⚡ Builds assets** - Compiles and optimizes frontend resources
+- **🚀 Runs optimization** - Caches routes, views, and configurations
+- **🔒 Applies security** - Sets production environment and security headers
+- **📊 Generates sitemap** - Creates SEO-optimized sitemaps
+
+### 🎛️ Manual Installation (Advanced Users)
+
+If you prefer manual installation or need custom configurations:
 
 1. **Clone the repository**
 ```bash
@@ -74,6 +116,68 @@ npm run build
 chmod +x optimize.sh
 ./optimize.sh
 ```
+
+## 🎯 Web Installer Features
+
+### One-Click Setup
+The web installer provides a complete setup experience:
+
+- **Smart Requirements Detection** - Automatically detects and validates all server requirements
+- **Database Auto-Configuration** - Tests connections and sets up the database seamlessly  
+- **User-Friendly Interface** - Beautiful, responsive installer with progress tracking
+- **Comprehensive Configuration** - Handles app settings, admin account, email, and more
+- **Asset Building Integration** - Automatically builds and optimizes frontend assets
+- **Security Hardening** - Applies production security settings and optimizations
+- **Error Handling** - Detailed error reporting and troubleshooting guidance
+
+### Installation Steps
+
+1. **Requirements Check** (`/install/index`)
+   - PHP 8.1+ validation
+   - Extension requirements (PDO, MySQL, GD, etc.)
+   - Directory permission validation
+   - Server software detection
+   - Optional feature detection (Redis, FFmpeg, etc.)
+
+2. **Configuration Setup** (`/install/config`)
+   - Application settings (name, URL, license)
+   - Database configuration with connection testing
+   - Admin account creation
+   - Email SMTP configuration (optional)
+   - Installation options (asset building, optimization, sample data)
+
+3. **Automatic Installation** (Backend Process)
+   - Database migration and seeding
+   - Storage directory setup and linking
+   - Frontend asset compilation
+   - Cache and route optimization
+   - Security environment configuration
+   - Performance optimization scripts
+
+4. **Completion** (`/install/complete`)
+   - Installation summary and verification
+   - Admin credentials display
+   - Next steps guidance
+   - Performance optimization tips
+
+### 🛡️ Security Features
+
+The installer automatically configures:
+- Production environment settings
+- Secure session configuration
+- Security headers middleware
+- File permission optimization
+- Cache and optimization strategies
+
+### 🔧 Troubleshooting
+
+If you encounter issues with the web installer:
+
+1. **Check Requirements**: Ensure all PHP extensions and permissions are properly set
+2. **Database Access**: Verify database credentials and server accessibility
+3. **File Permissions**: Ensure web server can write to storage and cache directories
+4. **Error Logs**: Check `storage/logs/laravel.log` for detailed error information
+5. **Manual Installation**: Fall back to manual installation if needed
 
 ## 🌐 Nginx Configuration
 
