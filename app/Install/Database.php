@@ -328,7 +328,7 @@ class Database
                 $filepath
             );
             
-            exec($command, $output, $returnCode);
+            \exec($command, $output, $returnCode);
             
             if ($returnCode === 0 && file_exists($filepath)) {
                 return [

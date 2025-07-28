@@ -120,27 +120,27 @@ class Requirement
 
     private function checkComposer()
     {
-        return shell_exec('composer --version') !== null;
+        return \shell_exec('composer --version') !== null;
     }
 
     private function checkNodejs()
     {
-        return shell_exec('node --version') !== null;
+        return \shell_exec('node --version') !== null;
     }
 
     private function checkNpm()
     {
-        return shell_exec('npm --version') !== null;
+        return \shell_exec('npm --version') !== null;
     }
 
     private function checkFFMpeg()
     {
-        return shell_exec('ffmpeg -version') !== null;
+        return \shell_exec('ffmpeg -version') !== null;
     }
 
     private function checkImageMagick()
     {
-        return shell_exec('convert -version') !== null;
+        return \shell_exec('convert -version') !== null;
     }
 
     private function convertToBytes($value)
