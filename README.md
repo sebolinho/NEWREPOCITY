@@ -30,10 +30,10 @@ A modern, high-performance streaming platform built with Laravel, Livewire, and 
 The **easiest and fastest way** to install your streaming platform:
 
 1. **Download and extract** the platform files to your web server
-2. **Set basic permissions**:
+2. **Run the automatic fix script** (if needed):
 ```bash
-chmod -R 755 storage bootstrap/cache
-chmod 644 .env
+chmod +x install-fix.sh
+./install-fix.sh
 ```
 3. **Visit the web installer**: Navigate to `https://your-domain.com/install/index`
 4. **Follow the wizard**: The installer will guide you through:
@@ -45,9 +45,15 @@ chmod 644 .env
 
 **That's it!** The web installer handles everything automatically:
 - Database connection and migrations
-- Admin user creation
+- Admin user creation  
 - Storage setup and linking
-- Asset compilation
+- Asset compilation and optimization
+- Performance optimizations
+- Security configuration
+
+### 🔧 Manual Installation (Advanced Users)
+
+If you prefer manual installation or encounter issues:
 - System optimization
 - Security configuration
 
@@ -474,6 +480,100 @@ php artisan tinker
 3. Make your changes
 4. Run tests and optimization
 5. Submit a pull request
+
+## 🔧 Troubleshooting
+
+### Common Issues and Solutions
+
+#### 1. "Mix manifest not found" Error
+**Error:** `Mix manifest not found at: /public/mix-manifest.json`
+
+**Solution:** This error occurs when the system tries to use Laravel Mix instead of Vite. Run the fix script:
+```bash
+chmod +x install-fix.sh
+./install-fix.sh
+```
+
+#### 2. Node.js Version Compatibility
+**Error:** `Unsupported engine` or Vite build failures
+
+**Solution:** The platform is now compatible with Node.js 16-20. If you have Node.js 20.19+ and still get errors:
+```bash
+npm install
+npm run build
+```
+
+#### 3. Build Process Fails
+**Error:** Vite build errors or permission denied
+
+**Solutions:**
+```bash
+# Clean install
+rm -rf node_modules package-lock.json
+npm install
+
+# Fix permissions
+chmod +x node_modules/.bin/*
+
+# Build assets
+npm run build
+```
+
+#### 4. 500 Server Errors
+**Error:** Various 500 errors throughout the application
+
+**Solutions:**
+- Run: `php artisan optimize:clear-all`
+- Check Laravel logs: `storage/logs/laravel.log`
+- Ensure database is properly configured
+- Run: `php artisan migrate:fresh --seed`
+
+#### 5. Web Installer Issues
+**Error:** Installer doesn't load or throws errors
+
+**Solutions:**
+```bash
+# Ensure proper permissions
+chmod -R 755 storage bootstrap/cache
+chmod 644 .env
+
+# Run fix script
+./install-fix.sh
+
+# Clear caches
+php artisan cache:clear
+php artisan config:clear
+```
+
+#### 6. Asset Loading Issues
+**Error:** CSS/JS files not loading
+
+**Solutions:**
+```bash
+# Rebuild assets
+npm run build
+
+# Check asset URLs in browser console
+# Ensure proper .htaccess configuration
+# Check storage link: php artisan storage:link
+```
+
+### Performance Optimization Commands
+```bash
+# Full performance optimization
+npm run performance
+
+# Individual optimizations
+php artisan optimize:max-pagespeed
+php artisan optimize:clear-all
+npm run production
+```
+
+### Getting Help
+- Check the browser console for JavaScript errors
+- Review PHP error logs in `storage/logs/`
+- Ensure all requirements are met (PHP 8.1+, MySQL, Node.js)
+- Run the diagnostic command: `php artisan about`
 
 ## 📄 License
 
