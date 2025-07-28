@@ -1,8 +1,11 @@
-const defaultTheme = require('tailwindcss/defaultTheme');
-const colors = require("tailwindcss/colors");
+import defaultTheme from 'tailwindcss/defaultTheme';
+import colors from "tailwindcss/colors";
+import formsPlugin from '@tailwindcss/forms';
+import typographyPlugin from '@tailwindcss/typography';
+import scrollbarPlugin from 'tailwind-scrollbar';
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
     content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
@@ -100,8 +103,8 @@ module.exports = {
     },
 
     plugins: [
-        require('@tailwindcss/forms'),
-        require('@tailwindcss/typography'),
-        require('tailwind-scrollbar')({nocompatible: true})
+        formsPlugin,
+        typographyPlugin,
+        scrollbarPlugin({nocompatible: true})
     ],
 };

@@ -102,27 +102,31 @@ class WatchController extends Controller
             $new = array(
                 $listing->title,
                 $listing->overview,
-                $listing->release_date->format('Y'),
-                !empty($listing->country->name) ? $listing->country->name : null,
-                isset($listing->genres[0]) ? $listing->genres[0]->title : null,
+                $listing->release_date ? $listing->release_date->format('Y') : '',
+                ($listing->country && !empty($listing->country->name)) ? $listing->country->name : null,
+                (isset($listing->genres[0]) && $listing->genres[0]) ? $listing->genres[0]->title : null,
             );
             $old = array('[title]', '[description]', '[release]', '[country]', '[genre]');
 
-            $config['title'] = trim(str_replace($old, $new, trim(config('settings.movie_title'))));
-            $config['description'] = trim(str_replace($old, $new, trim(config('settings.movie_description'))));
+            $config['title'] = trim(str_replace($old, $new, trim(config('settings.movie_title', $listing->title))));
+            $config['description'] = trim(str_replace($old, $new, trim(config('settings.movie_description', $listing->overview))));
             $config['image'] = $listing->coverurl;
         }
         ## SEO ##
 
-        if ($request->user() and !$listing->logs()->exists() and config('settings.history') == 'active') {
+        if ($request->user() and config('settings.history') == 'active') {
+            try {
+                if (!$listing->logs()->exists()) {
+                    $data = new Log();
+                    $data->user_id = $request->user()->id;
+                    $listing->logs()->save($data);
 
-            $data = new Log();
-            $data->user_id = $request->user()->id;
-            $listing->logs()->save($data);
-
-            $listing->view = (int) $listing->view + 1;
-            $listing->save();
-
+                    $listing->view = (int) $listing->view + 1;
+                    $listing->save();
+                }
+            } catch (\Exception $e) {
+                \Log::error('Error saving view log: ' . $e->getMessage());
+            }
         }
         return view('watch.movie', compact('config', 'listing', 'recommends'));
     }

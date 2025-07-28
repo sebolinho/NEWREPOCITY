@@ -124,6 +124,12 @@ Route::controller(App\Http\Controllers\InstallController::class)->name('install.
     Route::get('install/config', 'config')->name('config');
     Route::get('install/complete', 'complete')->name('complete');
     Route::post('install/config', 'store')->name('store');
+    
+    // AJAX endpoints for enhanced installation
+    Route::post('install/test-database', 'testDatabase')->name('test_database');
+    Route::get('install/detect-database', 'detectDatabase')->name('detect_database');
+    Route::post('install/optimize-system', 'optimizeSystem')->name('optimize_system');
+    Route::get('install/system-status', 'systemStatus')->name('system_status');
 });
 require __DIR__ . '/auth.php';
 require __DIR__ . '/admin.php';

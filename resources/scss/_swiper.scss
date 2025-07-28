@@ -1,6 +1,7 @@
-@import 'node_modules/swiper/swiper';
-@import 'node_modules/swiper/modules/pagination/pagination';
-@import 'node_modules/swiper/modules/effect-fade/effect-fade';
+// Import Swiper CSS bundle instead of SCSS to avoid import issues
+// @import 'swiper/swiper.scss';
+// @import 'swiper/modules/pagination/pagination.scss';
+// @import 'swiper/modules/effect-fade/effect-fade.scss';
 
 @at-root {
     :root {
