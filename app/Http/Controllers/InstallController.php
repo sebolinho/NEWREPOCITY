@@ -8,7 +8,6 @@ use App\Install\Requirement;
 use App\Install\Database;
 use App\Install\AppSettings;
 use App\Install\SystemOptimizer;
-use App\Install\SEOSetup;
 use Exception;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
@@ -33,13 +32,13 @@ class InstallController extends Controller
             return redirect()->route('install.index')->with('error', 'System requirements not met. Please resolve all issues before continuing.');
         }
         
-        // Get default SEO configuration
-        $seoDefaults = (new SEOSetup())->getDefaultSEOConfig();
+        // SEO is now managed exclusively through Admin Settings -> SEO tab
+        // Initial SEO configurations are automatically set by DatabaseSeeder.php
         
-        return view('install.config', compact('requirement', 'seoDefaults'));
+        return view('install.config', compact('requirement'));
     }
 
-    public function store(Request $request, Database $database, AppSettings $settings, SystemOptimizer $optimizer, SEOSetup $seoSetup) 
+    public function store(Request $request, Database $database, AppSettings $settings, SystemOptimizer $optimizer) 
     {
         // Validate input
         $request->validate([
@@ -102,13 +101,7 @@ class InstallController extends Controller
                 $installationSteps[] = ['step' => 'Admin user already exists', 'status' => 'completed'];
             }
 
-            // Step 6: Setup SEO Configuration
-            $installationSteps[] = ['step' => 'Configuring SEO settings...', 'status' => 'running'];
-            
-            $seoSetup->setupBasicSEO($request);
-            $installationSteps[] = ['step' => 'SEO configuration completed', 'status' => 'completed'];
-
-            // Step 7: System Optimization
+            // Step 5: System Optimization
             $installationSteps[] = ['step' => 'Running system optimizations...', 'status' => 'running'];
             
             $optimization = $optimizer->runFullOptimization();
@@ -119,17 +112,11 @@ class InstallController extends Controller
                 $errors[] = $optimization['error'] ?? 'Unknown optimization error';
             }
 
-            // Step 8: Generate Default Content
+            // Step 6: Generate Default Content
             $installationSteps[] = ['step' => 'Setting up default content...', 'status' => 'running'];
             
             $settings->setupDefaultContent();
             $installationSteps[] = ['step' => 'Default content created', 'status' => 'completed'];
-
-            // Step 9: Advanced SEO Setup
-            $installationSteps[] = ['step' => 'Finalizing SEO optimizations...', 'status' => 'running'];
-            
-            $seoSetup->setupAdvancedSEO();
-            $installationSteps[] = ['step' => 'Advanced SEO setup completed', 'status' => 'completed'];
 
             // Store installation log
             session()->put('installation_steps', $installationSteps);

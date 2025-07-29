@@ -8,7 +8,16 @@
         </div>
         <div class="mb-8">
             <h3 class="text-3xl mb-2 font-bold text-white">Configuração Automatizada</h3>
-            <p class="text-lg text-gray-400">Configure sua plataforma de streaming com otimizações automáticas de performance e SEO.</p>
+            <p class="text-lg text-gray-400">Configure sua plataforma de streaming com otimizações automáticas de performance.</p>
+            <div class="bg-blue-900/30 border border-blue-500/50 rounded-lg p-4 mt-4">
+                <div class="flex items-center">
+                    <i class="fas fa-info-circle text-blue-400 mr-3"></i>
+                    <div>
+                        <p class="text-blue-200 font-medium">Configurações SEO</p>
+                        <p class="text-blue-300 text-sm">Todas as configurações SEO serão gerenciadas via <strong>Admin → Settings → SEO</strong> após a instalação.</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         @if (session()->has('error'))
@@ -106,7 +115,7 @@
                     <div>
                         <x-form.label for="site_name" :value="__('Nome do Site')" class="text-white"/>
                         <x-form.input id="site_name" class="block mt-1 w-full bg-gray-700 border-gray-600 text-white" 
-                                      type="text" name="site_name" value="{{ old('site_name', $seoDefaults['site_name'])}}"
+                                      type="text" name="site_name" value="{{ old('site_name', 'NEWREPOCITY Streaming')}}"
                                       required placeholder="NEWREPOCITY Streaming"/>
                         <x-form.error :messages="$errors->get('site_name')" class="mt-2"/>
                     </div>
@@ -159,53 +168,6 @@
                 </div>
             </div>
 
-            <!-- SEO Configuration -->
-            <div class="bg-gray-800 rounded-lg p-6">
-                <h4 class="text-2xl font-semibold text-white mb-6 flex items-center">
-                    <i class="fas fa-search mr-3 text-purple-400"></i>
-                    Configuração SEO (Opcional)
-                </h4>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="md:col-span-2">
-                        <x-form.label for="site_description" :value="__('Descrição do Site')" class="text-white"/>
-                        <textarea id="site_description" name="site_description" rows="3" 
-                                  class="block mt-1 w-full bg-gray-700 border-gray-600 text-white rounded-md"
-                                  placeholder="{{ $seoDefaults['site_description'] }}">{{ old('site_description', $seoDefaults['site_description']) }}</textarea>
-                        <div class="text-xs text-gray-400 mt-1">Descrição para mecanismos de busca (150-160 caracteres recomendados)</div>
-                    </div>
-
-                    <div>
-                        <x-form.label for="google_analytics" :value="__('Google Analytics ID')" class="text-white"/>
-                        <x-form.input id="google_analytics" class="block mt-1 w-full bg-gray-700 border-gray-600 text-white" 
-                                      type="text" name="google_analytics" value="{{ old('google_analytics')}}"
-                                      placeholder="G-XXXXXXXXXX ou UA-XXXXXXXX-X"/>
-                        <x-form.error :messages="$errors->get('google_analytics')" class="mt-2"/>
-                    </div>
-
-                    <div>
-                        <x-form.label for="search_console" :value="__('Google Search Console')" class="text-white"/>
-                        <x-form.input id="search_console" class="block mt-1 w-full bg-gray-700 border-gray-600 text-white" 
-                                      type="text" name="search_console" value="{{ old('search_console')}}"
-                                      placeholder="Código de verificação"/>
-                    </div>
-
-                    <div>
-                        <x-form.label for="facebook_page" :value="__('Página do Facebook')" class="text-white"/>
-                        <x-form.input id="facebook_page" class="block mt-1 w-full bg-gray-700 border-gray-600 text-white" 
-                                      type="url" name="facebook_page" value="{{ old('facebook_page')}}"
-                                      placeholder="https://facebook.com/suapagina"/>
-                    </div>
-
-                    <div>
-                        <x-form.label for="twitter_handle" :value="__('Twitter/X')" class="text-white"/>
-                        <x-form.input id="twitter_handle" class="block mt-1 w-full bg-gray-700 border-gray-600 text-white" 
-                                      type="text" name="twitter_handle" value="{{ old('twitter_handle')}}"
-                                      placeholder="@seuusuario"/>
-                    </div>
-                </div>
-            </div>
-
             <!-- Installation Features -->
             <div class="bg-gradient-to-r from-blue-900 to-purple-900 rounded-lg p-6">
                 <h4 class="text-2xl font-semibold text-white mb-4 flex items-center">
@@ -240,13 +202,13 @@
 
                     <div class="bg-black/20 rounded p-4">
                         <h5 class="font-semibold text-white mb-2 flex items-center">
-                            <i class="fas fa-search mr-2 text-purple-400"></i>SEO
+                            <i class="fas fa-search mr-2 text-purple-400"></i>SEO (Admin Panel)
                         </h5>
                         <ul class="text-sm text-gray-300 space-y-1">
-                            <li>• Meta tags otimizadas</li>
-                            <li>• Sitemap automático</li>
-                            <li>• Schema.org markup</li>
-                            <li>• Open Graph cards</li>
+                            <li>• Configurações via Admin → SEO</li>
+                            <li>• Meta tags customizáveis</li>
+                            <li>• Templates com variáveis</li>
+                            <li>• Configuração pós-instalação</li>
                         </ul>
                     </div>
 
