@@ -102,5 +102,6 @@
 <livewire:notify-component/>
 @stack('javascript')
 <x-ui.toast/>
+@livewireScripts
 </body>
 </html>
