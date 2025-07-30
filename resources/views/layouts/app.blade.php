@@ -67,6 +67,7 @@
 
     @include('partials.head')
     @livewireStyles
+    @livewireScriptConfig([])
 </head>
 <body class="min-h-screen dark:bg-gray-950 flex flex-col relative" x-cloak="" x-data="{ searchOpen: false,loading:false,'sidebarToggle': false,compactToggle: localStorage.getItem('compactToggle') === 'true', cookiePolicy: localStorage.getItem('cookiePolicy'), promote: localStorage.getItem('promote')}"
     x-init="$watch('cookiePolicy', val => {
