@@ -49,6 +49,28 @@ npm run build
 npm run dev
 ```
 
+### 🔧 Resolução de Problemas de Build
+
+**Se receber erro de permissão (EACCES, Permission denied):**
+
+```bash
+# Executar script de correção de permissões
+./fix-permissions.sh
+npm run build
+```
+
+**Problemas comuns em produção:**
+- ❌ `Permission denied: /node_modules/.bin/vite`  
+- ❌ `spawn esbuild EACCES`  
+- ❌ `The service was stopped`
+
+**✅ Solução rápida:**  
+```bash
+chmod +x node_modules/.bin/* 2>/dev/null || true
+chmod +x node_modules/@esbuild/*/bin/* 2>/dev/null || true
+npm run build
+```
+
 ### 🔧 Quando Executar o Build
 
 **SEMPRE execute `npm run build` quando:**
@@ -627,6 +649,60 @@ php artisan tinker --execute="echo app(\Illuminate\Foundation\Vite::class)(['res
 # No .env, configure o domínio correto:
 APP_URL=https://seudominio.com  # NÃO http://localhost
 ```
+
+#### 5. Problemas de Permissão no Build (EACCES, Permission Denied)
+
+**🚨 PROBLEMA EM SERVIDORES DE PRODUÇÃO: Permissões incorretas em node_modules**
+
+```bash
+# Script automático para corrigir permissões
+./fix-permissions.sh
+```
+
+**Sinais do problema:**
+- `Permission denied: /node_modules/.bin/vite`
+- `spawn /node_modules/@esbuild/linux-x64/bin/esbuild EACCES`
+- `The service was stopped`
+
+**Solução completa passo a passo:**
+
+```bash
+# 1. Corrigir permissões de todos os binários
+find node_modules/.bin -type f -exec chmod +x {} \;
+find node_modules -name "esbuild" -exec chmod +x {} \;
+
+# 2. Corrigir permissões de diretórios
+find node_modules -type d -exec chmod 755 {} \;
+
+# 3. Corrigir permissões de arquivos
+find node_modules -type f -exec chmod 644 {} \;
+
+# 4. Corrigir especificamente ESBuild
+chmod +x node_modules/@esbuild/linux-x64/bin/esbuild
+
+# 5. Corrigir ownership se necessário (como root)
+chown -R $(whoami) node_modules/
+```
+
+**Se ainda persistir o erro:**
+
+```bash
+# Reinstalação completa com permissões corretas
+rm -rf node_modules package-lock.json
+npm install
+./fix-permissions.sh
+npm run build
+```
+
+**Para servidores com problemas recorrentes:**
+
+```bash
+# Adicionar ao script de deploy
+#!/bin/bash
+npm install
+./fix-permissions.sh
+npm run build
+chown -R www-data:www-data public/build/
 ```
 
 ## 📊 Métricas de Performance Alvo
