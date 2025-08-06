@@ -67,8 +67,25 @@
 
 
 <livewire:search-component/>
-<script src="{{asset('static/js/lazysizes.js')}}"></script>
+<script src="{{asset('static/js/lazysizes.js')}}" defer></script>
+<script src="{{asset('js/enhanced-lazy-loading.js')}}" defer></script>
 <livewire:notify-component/>
+
+{{-- Register Service Worker for caching --}}
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(registration) {
+                console.log('SW registered: ', registration);
+            })
+            .catch(function(registrationError) {
+                console.log('SW registration failed: ', registrationError);
+            });
+    });
+}
+</script>
+
 @stack('javascript')
 <x-ui.toast/>
 </body>

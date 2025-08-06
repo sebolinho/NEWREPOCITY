@@ -20,4 +20,24 @@ export default defineConfig({
             ]
         })
     ],
+    build: {
+        // Optimize bundle splitting
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    vendor: ['alpinejs', 'tippy.js', 'axios'],
+                    swiper: ['swiper']
+                }
+            }
+        },
+        // Improve compression
+        minify: 'esbuild',
+        cssMinify: true,
+        // Target modern browsers for better performance
+        target: 'esnext',
+        // Improve build performance
+        sourcemap: false,
+        // Optimize chunk size warnings
+        chunkSizeWarningLimit: 600
+    }
 });

@@ -40,30 +40,41 @@
 @push('javascript')
 
     <script>
-        var {{$layout}} = new Swiper(".swiper-{{$layout}} .swiper", {
-            slidesPerView: 2,
-            spaceBetween: 20,
-            navigation: {
-                nextEl: ".swiper-{{$layout}} .swiper-button-next",
-                prevEl: ".swiper-{{$layout}} .swiper-button-prev",
-            },
-            breakpoints: {
-                640: {
-                    slidesPerView: 3,
-                },
-                768: {
-                    slidesPerView: 4,
-                },
-                1300: {
-                    slidesPerView: 6,
-                },
-                1500: {
-                    slidesPerView: 8,
-                },
-                2000: {
-                    slidesPerView: 8,
-                },
-            },
+        document.addEventListener('DOMContentLoaded', function() {
+            // Defer Swiper initialization to avoid forced reflows
+            requestAnimationFrame(function() {
+                var {{$layout}} = new Swiper(".swiper-{{$layout}} .swiper", {
+                    slidesPerView: 2,
+                    spaceBetween: 20,
+                    navigation: {
+                        nextEl: ".swiper-{{$layout}} .swiper-button-next",
+                        prevEl: ".swiper-{{$layout}} .swiper-button-prev",
+                    },
+                    // Optimize performance
+                    speed: 400,
+                    preloadImages: false,
+                    lazy: {
+                        loadPrevNext: true,
+                    },
+                    breakpoints: {
+                        640: {
+                            slidesPerView: 3,
+                        },
+                        768: {
+                            slidesPerView: 4,
+                        },
+                        1300: {
+                            slidesPerView: 6,
+                        },
+                        1500: {
+                            slidesPerView: 8,
+                        },
+                        2000: {
+                            slidesPerView: 8,
+                        },
+                    },
+                });
+            });
         });
     </script>
 @endpush
