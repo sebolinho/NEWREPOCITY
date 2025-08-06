@@ -138,9 +138,9 @@ if (!function_exists('webper')) {
     }
 }
 
-// Image view
+// Image view with responsive support
 if (!function_exists('picture')) {
-    function picture($image = null, $size = null, $class = null, $title = null, $type = null)
+    function picture($image = null, $size = null, $class = null, $title = null, $type = null, $responsive = false, $sizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw')
     {
         $allowType = ['post', 'people', 'episode'];
         $sizeHtml = null;
@@ -149,14 +149,34 @@ if (!function_exists('picture')) {
             $sizeHtml = 'width="' . $sizeExp[0] . '" height="' . $sizeExp[1] . '"';
         }
 
+        // Generate responsive srcset if enabled
+        $srcsetHtml = '';
+        $sizesHtml = '';
+        if ($responsive && isset($image) && !empty($image)) {
+            // Create different sizes for responsive images
+            $sizeArray = ['300', '600', '900', '1200'];
+            $srcsetValues = [];
+            foreach ($sizeArray as $width) {
+                // For TMDB images, use different size parameters
+                if (strpos($image, 'image.tmdb.org') !== false) {
+                    $responsiveImage = str_replace(['w500', 'w780', 'w1280', 'w300'], 'w' . $width, $image);
+                } else {
+                    $responsiveImage = $image; // For local images, use original
+                }
+                $srcsetValues[] = $responsiveImage . ' ' . $width . 'w';
+            }
+            $srcsetHtml = 'data-srcset="' . implode(', ', $srcsetValues) . '"';
+            $sizesHtml = 'data-sizes="' . $sizes . '"';
+        }
+
         if (isset($type) and in_array($type, $allowType) and config('settings.tmdb_image') == 'active') {
             return '<picture>
-                <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="' . $image . '" alt="' . $title . '" loading="lazy" class="lazyload ' . $class . '" ' . $sizeHtml . '>
+                <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="' . $image . '" ' . $srcsetHtml . ' ' . $sizesHtml . ' alt="' . $title . '" loading="lazy" class="lazyload ' . $class . '" ' . $sizeHtml . '>
             </picture>';
         } elseif (isset($image)) {
             return '<picture>
-                <source data-srcset="' . webper($image) . '" type="image/webp" class="' . $class . '">
-                <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="' . $image . '" alt="' . $title . '" loading="lazy" class="lazyload ' . $class . '" ' . $sizeHtml . '>
+                <source data-srcset="' . webper($image) . '" type="image/webp">
+                <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="' . $image . '" ' . $srcsetHtml . ' ' . $sizesHtml . ' alt="' . $title . '" loading="lazy" class="lazyload ' . $class . '" ' . $sizeHtml . '>
             </picture>';
         }
 
