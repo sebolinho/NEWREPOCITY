@@ -151,12 +151,12 @@ if (!function_exists('picture')) {
 
         if (isset($type) and in_array($type, $allowType) and config('settings.tmdb_image') == 'active') {
             return '<picture>
-                <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="' . $image . '" alt="' . $title . '" class="lazyload ' . $class . '" ' . $sizeHtml . '>
+                <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="' . $image . '" alt="' . $title . '" loading="lazy" class="lazyload ' . $class . '" ' . $sizeHtml . '>
             </picture>';
         } elseif (isset($image)) {
             return '<picture>
                 <source data-srcset="' . webper($image) . '" type="image/webp" class="' . $class . '">
-                <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="' . $image . '" alt="' . $title . '" class="lazyload ' . $class . '" ' . $sizeHtml . '>
+                <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="' . $image . '" alt="' . $title . '" loading="lazy" class="lazyload ' . $class . '" ' . $sizeHtml . '>
             </picture>';
         }
 

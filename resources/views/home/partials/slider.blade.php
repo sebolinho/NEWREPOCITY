@@ -9,6 +9,12 @@
                             class="absolute inset-0 before:absolute before:right-0 rtl:before:left-0 before:top-0 before:bottom-0 before:w-1/5 before:bg-gradient-to-l before:from-gray-950 before:to-transparent after:absolute after:left-0 after:top-0 after:bottom-0 after:w-1/2 after:bg-gradient-to-r after:from-gray-950 after:to-transparent z-10"></div>
 
                         <img src="{{$slide->slideurl}}"
+                             @if($loop->first)
+                             fetchpriority="high"
+                             @else
+                             loading="lazy"
+                             @endif
+                             alt="{{$slide->title}}"
                              class="absolute h-full w-full object-cover">
                         <div class="absolute left-0 rtl:right-0 rtl:left-auto rtl:text-right lg:top-0 bottom-0 flex flex-col justify-center items-center text-center lg:text-left lg:items-start lg:max-w-3xl w-full z-20">
 
@@ -67,24 +73,41 @@
 @push('javascript')
 
     <script>
-        var swiper = new Swiper('.swiper-hero', {
-            pagination: {
-                el: '.swiper-hero .swiper-pagination',
-                clickable: true
-            },
-            navigation: {
-                nextEl: '.swiper-hero .swiper-button-next',
-                prevEl: '.swiper-hero .swiper-button-prev'
-            },
-            autoplay: {
-                delay: 3000,
-                disableOnInteraction: false
-            },
-            loop: true,
-            autoHeight:true,
-            effect: 'fade',
-            watchSlidesProgress: true
+        document.addEventListener('DOMContentLoaded', function() {
+            // Defer Swiper initialization to avoid forced reflows
+            requestAnimationFrame(function() {
+                var swiper = new Swiper('.swiper-hero', {
+                    pagination: {
+                        el: '.swiper-hero .swiper-pagination',
+                        clickable: true
+                    },
+                    navigation: {
+                        nextEl: '.swiper-hero .swiper-button-next',
+                        prevEl: '.swiper-hero .swiper-button-prev'
+                    },
+                    autoplay: {
+                        delay: 3000,
+                        disableOnInteraction: false
+                    },
+                    loop: true,
+                    effect: 'fade',
+                    watchSlidesProgress: true,
+                    // Remove autoHeight to prevent forced reflows
+                    // autoHeight:true,
+                    // Optimize performance
+                    speed: 600,
+                    preloadImages: false,
+                    lazy: {
+                        loadPrevNext: true,
+                    },
+                    // Use GPU acceleration
+                    touchRatio: 1,
+                    touchAngle: 45,
+                    simulateTouch: true,
+                    // Improve mobile performance
+                    resistanceRatio: 0.85
+                });
+            });
         });
-
     </script>
 @endpush

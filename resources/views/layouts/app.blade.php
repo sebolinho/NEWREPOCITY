@@ -67,7 +67,7 @@
 
 
 <livewire:search-component/>
-<script src="{{asset('static/js/lazysizes.js')}}"></script>
+<script src="{{asset('static/js/lazysizes.js')}}" defer></script>
 <livewire:notify-component/>
 @stack('javascript')
 <x-ui.toast/>

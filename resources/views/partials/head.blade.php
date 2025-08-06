@@ -2,6 +2,16 @@
 <link rel="icon" type="image/png" sizes="32x32" href="{{asset('favicon/favicon-32x32.png')}}">
 <link rel="icon" type="image/png" sizes="16x16" href="{{asset('favicon/favicon-16x16.png')}}">
 <link rel="manifest" href="{{asset('site.webmanifest')}}">
+
+{{-- Preconnect to external domains for performance --}}
+<link rel="preconnect" href="https://image.tmdb.org">
+<link rel="preconnect" href="https://zf.cantorparcels.com">
+<link rel="dns-prefetch" href="https://www.googletagmanager.com">
+
+{{-- Preload critical fonts --}}
+<link rel="preload" href="{{asset('build/assets/Inter-Regular.woff2')}}" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="{{asset('build/assets/Inter-Medium.woff2')}}" as="font" type="font/woff2" crossorigin="anonymous">
+
 @vite(['resources/scss/app.scss', 'resources/js/app.js'])
 
 <style>
