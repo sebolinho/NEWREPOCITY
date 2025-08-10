@@ -2,7 +2,14 @@
     <a href="{{route($listing->type,$listing->slug)}}"
        class="aspect-poster relative transition overflow-hidden cursor-pointer before:absolute before:-inset-px @if(config('settings.poster_type') == 'v2'){{'before:bg-gradient-to-t  before:to-gray-950/[.7]'}}@else{{'before:bg-gradient-to-b  before:to-gray-950/[.4]'}}@endif before:from-gray-950 before:-m-px before:z-[1] before:opacity-0 group-hover:before:opacity-100 block">
 
-        {!! picture($listing->imageurl,config('attr.poster.size_x').','.config('attr.poster.size_y'),'absolute h-full w-full object-cover rounded-md',$listing->title,'post') !!}
+        {{-- Optimize image loading based on position --}}
+        @php
+            $isAboveFold = isset($loop) && $loop->index < 8; // First 8 items
+            $loading = $isAboveFold ? 'eager' : 'lazy';
+            $fetchpriority = (isset($loop) && $loop->index < 4) ? 'high' : 'auto';
+        @endphp
+        
+        {!! picture($listing->imageurl, config('attr.poster.size_x').','.config('attr.poster.size_y'), 'absolute h-full w-full object-cover rounded-md', $listing->title, 'post', $loading, $fetchpriority) !!}
 
         <div
             class="absolute right-3 top-3 w-10 h-10 items-center justify-center text-white z-20 hidden group-hover:flex">
