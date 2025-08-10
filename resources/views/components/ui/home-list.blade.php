@@ -38,32 +38,50 @@
 </div>
 
 @push('javascript')
-
     <script>
-        var {{$layout}} = new Swiper(".swiper-{{$layout}} .swiper", {
-            slidesPerView: 2,
-            spaceBetween: 20,
-            navigation: {
-                nextEl: ".swiper-{{$layout}} .swiper-button-next",
-                prevEl: ".swiper-{{$layout}} .swiper-button-prev",
-            },
-            breakpoints: {
-                640: {
-                    slidesPerView: 3,
-                },
-                768: {
-                    slidesPerView: 4,
-                },
-                1300: {
-                    slidesPerView: 6,
-                },
-                1500: {
-                    slidesPerView: 8,
-                },
-                2000: {
-                    slidesPerView: 8,
-                },
-            },
-        });
+        // Initialize swiper only when Swiper library is available
+        function init{{ucfirst($layout)}}Swiper() {
+            if (window.Swiper) {
+                var {{$layout}} = new Swiper(".swiper-{{$layout}} .swiper", {
+                    slidesPerView: 2,
+                    spaceBetween: 20,
+                    navigation: {
+                        nextEl: ".swiper-{{$layout}} .swiper-button-next",
+                        prevEl: ".swiper-{{$layout}} .swiper-button-prev",
+                    },
+                    breakpoints: {
+                        640: {
+                            slidesPerView: 3,
+                        },
+                        768: {
+                            slidesPerView: 4,
+                        },
+                        1300: {
+                            slidesPerView: 6,
+                        },
+                        1500: {
+                            slidesPerView: 8,
+                        },
+                        2000: {
+                            slidesPerView: 8,
+                        },
+                    },
+                    lazy: {
+                        loadPrevNext: true,
+                    },
+                    preloadImages: false,
+                });
+            } else {
+                // Retry after a short delay if Swiper isn't loaded yet
+                setTimeout(init{{ucfirst($layout)}}Swiper, 100);
+            }
+        }
+
+        // Initialize after DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init{{ucfirst($layout)}}Swiper);
+        } else {
+            init{{ucfirst($layout)}}Swiper();
+        }
     </script>
 @endpush

@@ -67,7 +67,16 @@
 
 
 <livewire:search-component/>
-<script src="{{asset('static/js/lazysizes.js')}}"></script>
+<!-- Load lazy sizes after critical content is loaded -->
+<script>
+    // Optimize lazy loading initialization
+    window.addEventListener('DOMContentLoaded', function() {
+        const script = document.createElement('script');
+        script.src = '{{asset('static/js/lazysizes.js')}}';
+        script.async = true;
+        document.head.appendChild(script);
+    });
+</script>
 <livewire:notify-component/>
 @stack('javascript')
 <x-ui.toast/>

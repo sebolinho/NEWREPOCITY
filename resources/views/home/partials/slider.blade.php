@@ -8,8 +8,15 @@
                         <div
                             class="absolute inset-0 before:absolute before:right-0 rtl:before:left-0 before:top-0 before:bottom-0 before:w-1/5 before:bg-gradient-to-l before:from-gray-950 before:to-transparent after:absolute after:left-0 after:top-0 after:bottom-0 after:w-1/2 after:bg-gradient-to-r after:from-gray-950 after:to-transparent z-10"></div>
 
+                        <!-- Optimized responsive image with proper dimensions to prevent CLS -->
                         <img src="{{$slide->slideurl}}"
-                             class="absolute h-full w-full object-cover">
+                             class="absolute h-full w-full object-cover"
+                             width="874" 
+                             height="364"
+                             fetchpriority="{{$loop->index < 2 ? 'high' : 'auto'}}"
+                             loading="{{$loop->index < 2 ? 'eager' : 'lazy'}}"
+                             alt="{{$slide->title}}"
+                             decoding="{{$loop->index < 2 ? 'sync' : 'async'}}">
                         <div class="absolute left-0 rtl:right-0 rtl:left-auto rtl:text-right lg:top-0 bottom-0 flex flex-col justify-center items-center text-center lg:text-left lg:items-start lg:max-w-3xl w-full z-20">
 
                             <h3 class="text-3xl 2xl:text-6xl font-bold text-white mb-4 texture-text">{{$slide->title}}</h3>
@@ -67,24 +74,42 @@
 @push('javascript')
 
     <script>
-        var swiper = new Swiper('.swiper-hero', {
-            pagination: {
-                el: '.swiper-hero .swiper-pagination',
-                clickable: true
-            },
-            navigation: {
-                nextEl: '.swiper-hero .swiper-button-next',
-                prevEl: '.swiper-hero .swiper-button-prev'
-            },
-            autoplay: {
-                delay: 3000,
-                disableOnInteraction: false
-            },
-            loop: true,
-            autoHeight:true,
-            effect: 'fade',
-            watchSlidesProgress: true
-        });
+        // Initialize Swiper only when Swiper library is loaded
+        function initializeSwiper() {
+            if (window.Swiper) {
+                var swiper = new Swiper('.swiper-hero', {
+                    pagination: {
+                        el: '.swiper-hero .swiper-pagination',
+                        clickable: true
+                    },
+                    navigation: {
+                        nextEl: '.swiper-hero .swiper-button-next',
+                        prevEl: '.swiper-hero .swiper-button-prev'
+                    },
+                    autoplay: {
+                        delay: 3000,
+                        disableOnInteraction: false
+                    },
+                    loop: true,
+                    autoHeight:true,
+                    effect: 'fade',
+                    watchSlidesProgress: true,
+                    preloadImages: false,
+                    lazy: {
+                        loadPrevNext: true,
+                    }
+                });
+            } else {
+                // Retry after a short delay if Swiper isn't loaded yet
+                setTimeout(initializeSwiper, 100);
+            }
+        }
 
+        // Wait for DOM and then initialize
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeSwiper);
+        } else {
+            initializeSwiper();
+        }
     </script>
 @endpush

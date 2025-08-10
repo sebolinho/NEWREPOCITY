@@ -1,4 +1,8 @@
 {
+  "_vendor-1bafdb16.js": {
+    "file": "assets/vendor-1bafdb16.js",
+    "isDynamicEntry": true
+  },
   "resources/fonts/Inter-Black.woff": {
     "file": "assets/Inter-Black-8b21d5be.woff",
     "src": "resources/fonts/Inter-Black.woff"
@@ -156,15 +160,15 @@
     "src": "resources/fonts/Inter.var.woff2"
   },
   "resources/img/ai.svg": {
-    "file": "assets/ai-c04ca729.svg",
+    "file": "assets/ai-ddfd050b.svg",
     "src": "resources/img/ai.svg"
   },
   "resources/img/change.svg": {
-    "file": "assets/change-fd4503f5.svg",
+    "file": "assets/change-1a53b7f5.svg",
     "src": "resources/img/change.svg"
   },
   "resources/img/hero.svg": {
-    "file": "assets/hero-c39c2e4e.svg",
+    "file": "assets/hero-4a33fd1c.svg",
     "src": "resources/img/hero.svg"
   },
   "resources/img/jquery.minicolors.png": {
@@ -196,12 +200,18 @@
     "src": "resources/img/texture.webp"
   },
   "resources/js/app.js": {
-    "file": "assets/app-78822604.js",
+    "dynamicImports": [
+      "_vendor-1bafdb16.js"
+    ],
+    "file": "assets/app-4ad90062.js",
+    "imports": [
+      "_vendor-1bafdb16.js"
+    ],
     "isEntry": true,
     "src": "resources/js/app.js"
   },
   "resources/scss/app.scss": {
-    "file": "assets/app-41a0d3d4.css",
+    "file": "assets/app-c1dc3ab7.css",
     "isEntry": true,
     "src": "resources/scss/app.scss"
   }
