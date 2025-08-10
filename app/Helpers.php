@@ -140,7 +140,7 @@ if (!function_exists('webper')) {
 
 // Image view
 if (!function_exists('picture')) {
-    function picture($image = null, $size = null, $class = null, $title = null, $type = null)
+    function picture($image = null, $size = null, $class = null, $title = null, $type = null, $loading = 'lazy', $fetchpriority = 'auto')
     {
         $allowType = ['post', 'people', 'episode'];
         $sizeHtml = null;
@@ -149,17 +149,36 @@ if (!function_exists('picture')) {
             $sizeHtml = 'width="' . $sizeExp[0] . '" height="' . $sizeExp[1] . '"';
         }
 
-        if (isset($type) and in_array($type, $allowType) and config('settings.tmdb_image') == 'active') {
-            return '<picture>
-                <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="' . $image . '" alt="' . $title . '" class="lazyload ' . $class . '" ' . $sizeHtml . '>
-            </picture>';
-        } elseif (isset($image)) {
-            return '<picture>
-                <source data-srcset="' . webper($image) . '" type="image/webp" class="' . $class . '">
-                <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="' . $image . '" alt="' . $title . '" class="lazyload ' . $class . '" ' . $sizeHtml . '>
-            </picture>';
-        }
+        // Optimize loading attributes for performance
+        $loadingAttr = 'loading="' . $loading . '"';
+        $fetchpriorityAttr = ($fetchpriority !== 'auto') ? 'fetchpriority="' . $fetchpriority . '"' : '';
+        $decodingAttr = ($loading === 'eager') ? 'decoding="sync"' : 'decoding="async"';
 
+        if (isset($type) and in_array($type, $allowType) and config('settings.tmdb_image') == 'active') {
+            // For TMDB images, use native lazy loading for better performance
+            if ($loading === 'lazy') {
+                return '<picture>
+                    <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="' . $image . '" alt="' . $title . '" class="lazyload ' . $class . '" ' . $sizeHtml . ' ' . $decodingAttr . '>
+                </picture>';
+            } else {
+                return '<picture>
+                    <img src="' . $image . '" alt="' . $title . '" class="' . $class . '" ' . $sizeHtml . ' ' . $loadingAttr . ' ' . $fetchpriorityAttr . ' ' . $decodingAttr . '>
+                </picture>';
+            }
+        } elseif (isset($image)) {
+            // For local images, use WebP with fallback and optimized loading
+            if ($loading === 'lazy') {
+                return '<picture>
+                    <source data-srcset="' . webper($image) . '" type="image/webp" class="' . $class . '">
+                    <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="' . $image . '" alt="' . $title . '" class="lazyload ' . $class . '" ' . $sizeHtml . ' ' . $decodingAttr . '>
+                </picture>';
+            } else {
+                return '<picture>
+                    <source srcset="' . webper($image) . '" type="image/webp">
+                    <img src="' . $image . '" alt="' . $title . '" class="' . $class . '" ' . $sizeHtml . ' ' . $loadingAttr . ' ' . $fetchpriorityAttr . ' ' . $decodingAttr . '>
+                </picture>';
+            }
+        }
     }
 }
 
